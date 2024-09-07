@@ -22,7 +22,7 @@ use App\Http\Controllers\Admin\AdminController;
 
 
 // Group routes for other pages but without 'auth' prefix in the URL
-Route::get('/', [HomeController::class, 'Home'])->name('home');
+Route::get('/home', [HomeController::class, 'Home'])->name('home');
 
     Route::get('/login', [UserController::class,'login'])->name('login');
     Route::post('/login', [UserController::class,'postLogin']);
@@ -34,9 +34,15 @@ Route::get('/', [HomeController::class, 'Home'])->name('home');
     Route::view('/map', 'auth.map')->name('map');
 
     Route::view('/network_system', 'auth.network_system')->name('network_system');
+      // Đăng ký trở thành đối tác
+    Route::post('/register-partner', [NetworkSystemController::class, 'store'])->name('register.partner');
     Route::view('/user_manual', 'auth.user_manual')->name('user_manual');
+    
     Route::view('/tramsac', 'auth.tramsac')->name('tramsac');
+    Route::post('/tramsac/store', [TramSacController::class, 'store'])->name('tramsac.store');
+    
 
+    
     Route::get('/news', [HomeController::class,'getNew'])->name('news');
     Route::view('/details', 'auth.details')->name('details');
     Route::view('/introduce', 'auth.introduce')->name('introduce');
@@ -49,10 +55,9 @@ Route::get('/', [HomeController::class, 'Home'])->name('home');
   });
   
   
-  // Đăng ký trở thành đối tác
-Route::post('/register-partner', [NetworkSystemController::class, 'store'])->name('register.partner');
 
-Route::post('/tramsac/store', [TramSacController::class, 'store'])->name('tramsac.store');
+
+
 
 
 
