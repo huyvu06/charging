@@ -16,4 +16,32 @@ class DashBoardController extends Controller
         
         return view('auth.login');
     }
+    public function account()
+    {
+        return view('admin.account');
+    }
+
+    public function news()
+    {
+        return view('admin.news');
+    }
+
+    public function approval()
+    {
+        return view('admin.approval');
+    }
+
+    public function chargingStation()
+    {
+        return view('admin.charging-station');
+    }
+    public function email()
+    {
+        return view('admin.email');
+    }
+
+    public function settings()
+    {
+        return view('admin.settings');
+    }
 }

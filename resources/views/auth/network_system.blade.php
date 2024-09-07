@@ -108,14 +108,19 @@
             }
         }
     </style>
-
     <div class="container">
         <div class="img">
-            <img src="{{asset('images/map.jpg')}}" alt="Bản đồ Việt Nam">
+            <img src="{{ asset('images/map.jpg') }}" alt="Bản đồ Việt Nam">
         </div>
         <div class="form">
             <h2>Đăng Ký Trở Thành Đối Tác</h2>
-            <form>
+            @if(session('error'))
+                <div class="alert alert-danger">
+                    {{ session('error') }}
+                </div>
+            @endif
+            <form action="{{ route('register.partner') }}" method="POST">
+                @csrf
                 <label for="name">Họ và tên:</label>
                 <input type="text" id="name" name="name" required>
 
@@ -136,4 +141,33 @@
             </form>
         </div>
     </div>
+
+    <!-- Modal -->
+    <div class="modal fade" id="successModal" tabindex="-1" role="dialog" aria-labelledby="successModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="successModalLabel">Thông Báo</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    Đăng ký thành công!
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" data-dismiss="modal">Đóng</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    @if(session('success'))
+    <script>
+        $(document).ready(function() {
+            $('#successModal').modal('show');
+        });
+    </script>
+@endif
+
 @endsection

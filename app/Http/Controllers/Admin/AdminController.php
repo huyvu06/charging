@@ -7,6 +7,13 @@ use Illuminate\Http\Request;
 use Auth;
 class AdminController extends Controller
 {
+    public function index(){
+        return view('admin.dashboard');
+    }
+    public function dashboard()
+    {
+        return view('admin.dashboard');
+    }
     public function logon(){
         return view('admin.logon');
     }

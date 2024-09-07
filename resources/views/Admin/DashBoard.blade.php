@@ -1,5 +1,7 @@
+<meta name="csrf-token" content="{{ csrf_token() }}">
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -15,6 +17,13 @@
             overflow: hidden;
         }
 
+        .main-container {
+            display: flex;
+            height: 100%;
+            width: 100%;
+            overflow: hidden;
+        }
+
         .topbar {
             width: 100%;
             height: 60px;
@@ -26,6 +35,9 @@
             box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
             justify-content: space-between;
             z-index: 1;
+            position: fixed;
+            top: 0;
+            left: 0;
         }
 
         .topbar .logo {
@@ -89,7 +101,7 @@
         }
 
         .sidebar.collapsed {
-            width: 80px; /* Adjust width for collapsed state */
+            width: 80px;
         }
 
         .sidebar .logo {
@@ -98,7 +110,7 @@
             font-size: 24px;
             font-weight: bold;
             margin-bottom: 20px;
-            display: none; /* Hide in collapsed state */
+            display: none;
         }
 
         .sidebar.collapsed .logo {
@@ -130,28 +142,43 @@
         li i {
             margin-right: 10px;
             width: 20px;
-            font-size: 18px; /* Default icon size */
+            font-size: 18px;
             transition: font-size 0.3s ease;
         }
 
         .sidebar.collapsed li i {
-            font-size: 26px; /* Larger icon size when collapsed */
+            font-size: 26px;
         }
 
         li span {
-            display: inline; /* Show text in expanded state */
+            display: inline;
         }
 
         .sidebar.collapsed li span {
-            display: none; /* Hide text in collapsed state */
+            display: none;
         }
 
         li.active {
             color: #5a5cff;
             font-weight: bold;
         }
+
+        .content {
+            margin-left: 250px;
+            padding: 20px;
+            flex-grow: 1;
+            overflow-y: auto;
+            transition: margin-left 0.3s ease;
+            margin-top: 60px;
+            /* Space for topbar */
+        }
+
+        .sidebar.collapsed~.content {
+            margin-left: 80px;
+        }
     </style>
 </head>
+
 <body>
     <div class="topbar">
         <div class="logo">
@@ -169,47 +196,90 @@
                 <i class="fas fa-bell"></i>
             </div>
             <div class="notification">
-               <a href="{{route('home')}}">thoát</a>
+                <a href="{{route('home')}}">Thoát</a>
             </div>
         </div>
     </div>
     <div class="sidebar">
         <nav>
             <ul>
-                <li class="active"><i class="fas fa-home"></i><span> Dashboard</span></li>
-                <li><i class="fas fa-user"></i><span> Tài Khoản</span></li>
-                <li><i class="fas fa-newspaper"></i><span> Tin tức</span></li>
-                <li><i class="fas fa-check-circle"></i><span> Phê Duyệt</span></li>
-                <li><i class="fas fa-plug"></i><span> Trạm Sạc</span></li>
-                <li><i class="fas fa-envelope"></i><span> Email</span></li>
-                <li><i class="fas fa-cog"></i><span> Cài Đặt</span></li>
-                <li><i class="fas fa-cog"></i><span>
-                    @auth
-                        {{ Auth::user()->name }}
-                    @else
-                        Khách
-                    @endauth
-                </span></li>
+                <li class="active" data-url="{{ url('/dashboard') }}"><i class="fas fa-home"></i><span> Dashboard</span>
+                </li>
+                <li data-url="{{ route('admin.account') }}"><i class="fas fa-user"></i><span> Tài Khoản</span></li>
+                <li data-url="{{ route('admin.news') }}"><i class="fas fa-newspaper"></i><span> Tin tức</span></li>
+                <li data-url="{{ route('admin.approval') }}"><i class="fas fa-check-circle"></i><span> Phê Duyệt</span>
+                </li>
+                <li data-url="{{ route('admin.charging-station') }}"><i class="fas fa-plug"></i><span> Trạm Sạc</span>
+                </li>
+                <li data-url="{{ route('admin.email') }}"><i class="fas fa-envelope"></i><span> Email</span></li>
+                <li data-url="{{ route('admin.settings') }}"><i class="fas fa-cog"></i><span> Cài Đặt</span></li>
+
+                <li><i class="fas fa-user"></i><span>
+                        @auth
+                            {{ Auth::user()->name }}
+
+
+                        @else
+                            Khách
+                        @endauth
+                    </span></li>
             </ul>
         </nav>
     </div>
+    <div class="main-container">
+        <div class="content">
+            <!-- Content will be dynamically loaded here -->
+            <h2>Welcome to the Admin Dashboard</h2>
+            <p>Select a menu item to load content here.</p>
+        </div>
+    </div>
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
+        document.addEventListener('DOMContentLoaded', function () {
             const menuItems = document.querySelectorAll('.sidebar nav ul li');
-            const toggleBtn = document.querySelector('.topbar .hamburger'); // Updated selector
+            const toggleBtn = document.querySelector('.topbar .hamburger');
             const sidebar = document.querySelector('.sidebar');
+            const contentArea = document.querySelector('.content');
 
             menuItems.forEach(item => {
-                item.addEventListener('click', function() {
+                item.addEventListener('click', function () {
                     menuItems.forEach(i => i.classList.remove('active'));
                     this.classList.add('active');
+
+                    const url = this.getAttribute('data-url');
+                    if (url) {
+                        loadContent(url);
+                    }
                 });
             });
 
-            toggleBtn.addEventListener('click', function() {
+            toggleBtn.addEventListener('click', function () {
                 sidebar.classList.toggle('collapsed');
             });
+
+            function loadContent(url) {
+                fetch(url, {
+                    headers: {
+                        'X-Requested-With': 'XMLHttpRequest'
+                    }
+                })
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error('Network response was not ok');
+                        }
+                        return response.text();
+                    })
+                    .then(data => {
+                        contentArea.innerHTML = data;
+                    })
+                    .catch(error => {
+                        contentArea.innerHTML = '<h2>Error</h2><p>Unable to load content.</p>';
+                        console.error('Error loading content:', error);
+                        console.error('URL:', url);
+                        console.error('Error details:', error.message);
+                    });
+            }
         });
     </script>
 </body>
+
 </html>

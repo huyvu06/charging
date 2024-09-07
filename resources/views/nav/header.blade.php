@@ -43,7 +43,7 @@
         }
 
         .map {
-            padding-top: 20px ;
+            padding-top: 20px;
             background-color: #8ff76e;
             padding: 20px;
             text-align: center;
@@ -86,6 +86,7 @@
                         data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" style="color: #707862;"> Dành
                         cho khách hàng </a>
                     <div class="dropdown-menu" aria-labelledby="dropdownId">
+                        <a class="dropdown-item" href="{{ asset('map') }}"> Bản Đồ Trạm sạc </a>
                         <a class="dropdown-item" href="{{ asset('network_system') }}"> Hệ Thống Mạng Lưới </a>
                         <a class="dropdown-item" href="{{ route('user_manual') }}"> Hướng Dẫn Sự Dụng Trạm Sạc </a>
                     </div>
@@ -107,7 +108,7 @@
                                 Liên Hệ
                             </a>
                         </li>
-                        
+
                     </ul>
                 </div>
             </ul>
@@ -116,16 +117,12 @@
             <form class="form-inline my-2 my-lg-0">
                 <input class="form-control mr-sm-2" type="text" placeholder="Search">
                 <ul class="navbar-nav ml-auto">
-
                     @auth
                     <li class="nav-item">
-                        <a class="btn btn-outline-light mr-2">{{ session('user_name', Auth::user()->name) }}</a>
+                        <a class="btn btn-outline-light mr-2">{{ Auth::user()->name }}</a>
                     </li>
                     <li class="nav-item">
-                        <form action="{{ route('logout') }}" method="POST" class="d-inline">
-                            @csrf
-                            <button type="submit" class="btn btn-light">Đăng xuất</button>
-                        </form>
+                    <a class="btn btn-light" href="{{ route('user.logout') }}" role="button">Đăng Xuất</a>
                     </li>
                     @else
                     <li class="nav-item">
@@ -135,7 +132,6 @@
                         <a class="btn btn-light" href="{{ route('sign') }}" role="button">Đăng ký</a>
                     </li>
                     @endauth
-                    
                 </ul>
             </form>
 
