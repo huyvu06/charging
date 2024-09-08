@@ -17,10 +17,13 @@ class TramSac extends Model
         'phone',
         'email',
         'name_tramsac',
+        'image',
         'content',
-        'map_lat',             // Thêm trường này
-        'map_lon',             // Thêm trường này
+        'map_lat',            
+        'map_lon',            
         'address',
+        'loai_tram',
+        'loai_sac',
         'user_id',
         'id_doitac',
         'confirmation_token',

@@ -34,7 +34,7 @@ class TramSacController extends Controller
 
 public function store(Request $request)
 {
-    // Kiểm tra nếu người dùng chưa đăng nhập
+
     if (!Auth::check()) {
         return redirect()->route('login')->with('error', 'Bạn cần phải đăng nhập để thực hiện thao tác này.');
     }
@@ -45,8 +45,11 @@ public function store(Request $request)
         'phone' => 'required|string',
         'email' => 'required|string|email|unique:tram_sac',
         'name_tramsac' => 'required|string|max:255',
+        'image' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048',
         'address' => 'required|string',
-        'map' => 'required|string', // Đảm bảo map (tọa độ) không rỗng
+        'loai_tram' => 'required|string',
+        'loai_sac' => 'required|string',
+        'map' => 'required|string', 
     ]);
 
     try {
@@ -54,36 +57,34 @@ public function store(Request $request)
         $coordinates = explode(',', $request->map);
         $lat = isset($coordinates[0]) ? trim($coordinates[0]) : null;
         $lon = isset($coordinates[1]) ? trim($coordinates[1]) : null;
-
-        // Lấy user_id từ người dùng hiện tại
+        $imageName = base64_encode(file_get_contents($request->file('image')->path()));
+        
         $user_id = Auth::id();
 
-        // Tạo mới trạm sạc nhưng chưa kích hoạt
         $station = TramSac::create([
             'name' => $request->input('name'),
             'email' => $request->input('email'),
             'phone' => $request->input('phone'),
             'name_tramsac' => $request->input('name_tramsac'),
+            'image' => $imageName,
             'content' => $request->input('content'),
-            'map_lat' => $lat,  // Lưu vĩ độ
-            'map_lon' => $lon,  // Lưu kinh độ
+            'map_lat' => $lat, 
+            'map_lon' => $lon, 
             'address' => $request->input('address'),
+            'loai_tram' => $request->input('loai_tram'),
+            'loai_sac' => $request->input('loai_sac'),
             'user_id' => $user_id,
             'id_doitac' => null,
             'confirmation_token' => Str::random(40),
-            'status' => 0, // Mặc định là chưa xác nhận
+            'status' => 0, 
         ]);
 
-        $recipientEmail = 'vuvanhuy.tdc.3557@gmail.com'; // Đặt địa chỉ email của người nhận vào đây
-
+        $recipientEmail = 'vuvanhuy.tdc.3557@gmail.com'; 
         // Gửi email xác nhận đến người nhận
         Mail::to($recipientEmail)->send(new RegisterStationConfirmationMail($station));
 
-        // Chuyển hướng với thông báo thành công
         return redirect()->route('tramsac')->with('success', 'Đã gửi thông tin đăng ký trạm sạc thành công. Vui lòng kiểm tra email để xác nhận.');
-
     } catch (\Exception $e) {
-        // Xử lý lỗi nếu xảy ra
         return back()->with('error', 'Có lỗi xảy ra khi đăng ký trạm sạc: ' . $e->getMessage());
     }
 }
@@ -91,25 +92,21 @@ public function store(Request $request)
 
 public function confirm($token)
 {
-    // Tìm trạm sạc dựa trên token
+    
     $station = TramSac::where('confirmation_token', $token)->first();
-
-    // Nếu không tìm thấy trạm sạc hoặc token không hợp lệ
+   
     if (!$station) {
         return redirect()->route('home')->with('error', 'Token xác nhận không hợp lệ.');
     }
-
-    // Kiểm tra nếu trạm đã được xác nhận trước đó
+   
     if ($station->status === 1) {
         return redirect()->route('home')->with('info', 'Trạm sạc đã được xác nhận trước đó.');
     }
-
-    // Xác nhận trạm sạc và xóa token
+   
     $station->status = 1;
     $station->confirmation_token = null;
     $station->save();
-
-    // Chuyển hướng đến trang quản lý trạm sạc với thông báo thành công
+   
     return redirect()->route('tramsac.index')->with('success', 'Trạm sạc "' . $station->name . '" đã được xác nhận thành công.');
 }
 

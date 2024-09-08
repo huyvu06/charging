@@ -103,7 +103,7 @@
 </style>
 
 <div class="container">
-    <form class="form-container" method="POST" action="{{ route('tramsac.store') }}">
+    <form class="form-container" method="POST" action="{{ route('tramsac.store') }}" enctype="multipart/form-data">
         @csrf
         <h1>Đối Tác Chiến Lược</h1>
 
@@ -146,13 +146,27 @@
             <input type="text" id="name_tramsac" name="name_tramsac" required value="{{ old('name_tramsac') }}">
         </div>
         <div class="form-group">
+            <label for="image">Hình ảnh(*):</label>
+            <input type="file" id="image" name="image" required accept="image/*">
+        </div>
+        <div class="form-group">
+            <label for="loai_tram">Loại Cổng Sạc(*):</label>
+            <select id="loai_tram" name="loai_tram" required>
+                <option value="AC" {{ old('loai_tram') == 'AC' ? 'selected' : '' }}>AC</option>
+                <option value="DC" {{ old('loai_tram') == 'DC' ? 'selected' : '' }}>DC</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label for="loai_sac">Mã Cổng Sạc(*):</label>
+            <input type="text" id="loai_sac" name="loai_sac" required value="{{ old('loai_sac') }}">
+        </div>
+        <div class="form-group">
             <label for="content">Nội Dung:</label>
             <input type="text" id="content" name="content" value="{{ old('content') }}">
         </div>
         <div class="form-group">
             <label for="map">Kinh Độ & Vĩ Độ:</label>
-            <input type="text" id="map" name="map"
-                placeholder="Nhấp vào 'Lấy Vị Trí' để tự động điền hoặc nhập thủ công" value="{{ old('map') }}">
+            <input type="text" id="map" name="map" placeholder="Nhấp vào 'Lấy Vị Trí' để tự động điền hoặc nhập thủ công" value="{{ old('map') }}">
             <button type="button" id="getLocation" class="btn btn-secondary">Lấy Vị Trí</button>
         </div>
         <div class="form-group">

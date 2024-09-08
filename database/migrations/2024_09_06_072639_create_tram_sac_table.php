@@ -15,11 +15,14 @@ return new class extends Migration
             $table->id('id_tramsac'); 
             $table->string('phone')->nullable(); 
             $table->string('name');
+            $table->longText('image');
+            $table->string('loai_tram');
+            $table->string('loai_sac');
             $table->string('email')->unique(); 
             $table->string('name_tramsac'); 
             $table->text('content'); 
-            $table->decimal('map_lat', 10, 7)->nullable(); // Thêm trường vĩ độ
-            $table->decimal('map_lon', 10, 7)->nullable(); // Thêm trường kinh độ
+            $table->decimal('map_lat', 10, 7)->nullable(); 
+            $table->decimal('map_lon', 10, 7)->nullable(); 
             $table->string('address'); 
             $table->string('confirmation_token', 40)->nullable(); 
             $table->timestamp('email_verified_at')->nullable();
