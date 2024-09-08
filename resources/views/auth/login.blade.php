@@ -201,58 +201,55 @@
         }
     </style>
 
-    <div class="container">
-        <div class="image-container">
-            <img src="{{ asset('images/login.jpg') }}" alt="Person working on laptop">
-        </div>
-        <div class="form-container">
-            <h1>Login</h1>
+<div class="container">
+    <div class="image-container">
+        <img src="{{ asset('images/login.jpg') }}" alt="Person working on laptop">
+    </div>
+    <div class="form-container">
+        <h1>Login</h1>
         @if ($message = Session::get('error'))
-           <div class="alert alert-danger alert-block">
-	          
+            <div class="alert alert-danger alert-block">
                 <button type="button" class="close" data-dismiss="alert">×</button>	
-        
-               <strong>{{ $message }}</strong>
-          </div>
-          
-     @endif
-            <form action="" method="POST">
-                @csrf
-                <div class="form-group">
-                    <i class="fas fa-user"></i>
-                    <input type="text" placeholder="Email" name="email" required>
-                </div>
-                <div class="form-group">
-                    <i class="fas fa-lock"></i>
-                    <input type="password" id="password" placeholder="Password" name="password" required>
-                    <i class="fas fa-eye toggle-password" onclick="togglePassword()"></i>
-                </div>
-                <div class="checkbox-group">
-                    <input type="checkbox" id="remember" required>
-                    <label for="remember" style="margin-top:6px">Remember me</label>
-                </div>
-                <button type="submit">Log in</button>
-            </form>
-            <div class="create-account">
-                <a href="#">Create an account</a>
+                <strong>{{ $message }}</strong>
             </div>
-            <div class="social-login">
-                <span>Or login with</span>
-                <div class="social-icons">
-                    <a href="#" class="facebook">f</a>
-                    <a href="#" class="twitter">t</a>
-                    <a href="#" class="google">G</a>
-                </div>
+        @endif
+        <form action="" method="POST">
+            @csrf
+            <div class="form-group">
+                <i class="fas fa-user"></i>
+                <input type="text" placeholder="Email" name="email" required>
+            </div>
+            <div class="form-group">
+                <i class="fas fa-lock"></i>
+                <input type="password" id="password" placeholder="Password" name="password" required>
+                <i class="fas fa-eye toggle-password" onclick="togglePassword()"></i>
+            </div>
+            <div class="checkbox-group">
+                <input type="checkbox" id="remember" name="remember">
+                <label for="remember" style="margin-top:6px">Remember me</label>
+            </div>
+            <button type="submit">Log in</button>
+        </form>
+        <div class="create-account">
+            <a href="#">Create an account</a>
+        </div>
+        <div class="social-login">
+            <span>Or login with</span>
+            <div class="social-icons">
+                <a href="#" class="facebook">f</a>
+                <a href="#" class="twitter">t</a>
+                <a href="#" class="google">G</a>
             </div>
         </div>
     </div>
-    <script>
-        function togglePassword() {
-            const passwordField = document.getElementById('password');
-            const toggleIcon = passwordField.nextElementSibling;
-            const type = passwordField.type === 'password' ? 'text' : 'password';
-            passwordField.type = type;
-            toggleIcon.classList.toggle('fa-eye-slash');
-        }
-    </script>
+</div>
+<script>
+    function togglePassword() {
+        const passwordField = document.getElementById('password');
+        const toggleIcon = passwordField.nextElementSibling;
+        const type = passwordField.type === 'password' ? 'text' : 'password';
+        passwordField.type = type;
+        toggleIcon.classList.toggle('fa-eye-slash');
+    }
+</script>
 @endsection

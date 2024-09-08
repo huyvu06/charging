@@ -129,7 +129,7 @@
             '<p>Địa Chỉ: ' + nearestStation.address + '</p>' +
             '<p>Loại trạm: ' + nearestStation.loai_tram + '</p>' +
             '<p>Loại sạc: ' + nearestStation.loai_sac + '</p>' +
-            // (nearestStation.image ? '<img src="' + nearestStation.image + '" alt="Trạm sạc">' : '') +
+            (nearestStation.image ? '<img src="data:image;base64,' + nearestStation.image + '" alt="image">' : '') +
             '<button onclick="getRouteToLocation(' + nearestStation.map_lat + ', ' + nearestStation.map_lon + ')">Chỉ đường</button>' +
             '<button onclick="shareStationLocation(' + nearestStation.map_lat + ', ' + nearestStation.map_lon + ')">Chia sẻ vị trí</button>' +
             '</div>').openPopup();
@@ -158,7 +158,7 @@
             '<p>' + station.address + '</p>' +
             '<p>Loại trạm: ' + station.loai_tram + '</p>' +
             '<p>Loại sạc: ' + station.loai_sac + '</p>' +
-            // (station.image ? '<img src="' + station.image + '" alt="Trạm sạc">' : '') +
+            (station.image ? '<img src="data:image;base64,' + station.image + '" alt="image">' : '') +
             '<button onclick="getRouteToLocation(' + station.map_lat + ', ' + station.map_lon + ')">Chỉ đường</button>' +
             '<button onclick="shareStationLocation(' + station.map_lat + ', ' + station.map_lon + ')">Chia sẻ vị trí</button>' +
             '</div>');

@@ -22,33 +22,41 @@ class UserController extends Controller
     }
 
     public function postSign(Request $req)
-    {
+{
+    // Xác thực dữ liệu đầu vào
+    $validatedData = $req->validate([
+        'name' => 'required',
+        'email' => 'required|email',
+        'password' => 'required|min:6',
+    ]);
 
-        $validatedData = $req->validate([
-            'name' => 'required',
-            'email' => 'required|email|unique:users,email',
-            'password' => 'required|min:6',
-        ]);
-
-        // dd($validatedData);
-        $validatedData['password'] = Hash::make($req->password);
-
-        // dd($validatedData);
-        try {
-            User::create($validatedData);
-
-        } catch (\Throwable $th) {
-            dd($th);
-        }
-
-        return redirect()->route('login');
+    if (User::where('email', $req->email)->exists()) {
+        
+        return redirect()->back()
+            ->withErrors(['email' => 'Email này đã được sử dụng để đăng ký tài khoản.'])
+            ->withInput();
     }
+    $validatedData['password'] = Hash::make($req->password);
+
+    try {
+      
+        User::create($validatedData);
+    } catch (\Throwable $th) {
+        
+        return redirect()->back()
+            ->withErrors(['error' => 'Đã xảy ra lỗi khi tạo tài khoản.'])
+            ->withInput();
+    }
+
+    
+    return redirect()->route('login')->with('success', 'Đăng ký thành công. Vui lòng đăng nhập.');
+}
 
     public function logout(Request $request)
     {
         Auth::logout();
-        $request->session()->flush(); // Xóa toàn bộ dữ liệu session
-        $request->session()->regenerate(); // Tạo lại ID session để tránh tấn công session fixation
+        $request->session()->flush(); 
+        $request->session()->regenerate(); 
 
         return redirect()->route('login');
     }
@@ -56,15 +64,20 @@ class UserController extends Controller
     public function postLogin(Request $req)
     {
         $credentials = $req->only('email', 'password');
-
-        if (Auth::attempt($credentials)) {
-            // Lưu thông tin người dùng vào session
+        
+     
+        $remember = $req->has('remember');
+    
+        if (Auth::attempt($credentials, $remember)) {
+          
             session(['user_name' => Auth::user()->name]);
-            \Log::info('User logged in:', ['user_id' => Auth::user()->user_id]);
+            \Log::info('User logged in:', ['user_id' => Auth::user()->id]);
             return redirect()->route('home');
         }
-
+    
         return redirect()->back()->with('error', 'Thông tin đăng nhập không đúng.');
     }
+    
+    
 
 }
