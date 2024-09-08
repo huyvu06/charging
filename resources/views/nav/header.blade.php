@@ -116,13 +116,19 @@
             <!-- Search bar -->
             <form class="form-inline my-2 my-lg-0">
                 <input class="form-control mr-sm-2" type="text" placeholder="Search">
+            
                 <ul class="navbar-nav ml-auto">
                     @auth
-                    <li class="nav-item">
-                        <a class="btn btn-outline-light mr-2">{{ Auth::user()->name }}</a>
-                    </li>
-                    <li class="nav-item">
-                    <a class="btn btn-light" href="{{ route('user.logout') }}" role="button">Đăng Xuất</a>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            {{ Auth::user()->name }}
+                        </a>
+                        <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                            <a class="dropdown-item" href="#">Profile</a>
+                            <a class="dropdown-item" href="">Quản lý trạm sạc</a>
+                            <div class="dropdown-divider"></div>
+                            <a class="dropdown-item" href="{{ route('user.logout') }}">Đăng Xuất</a>
+                        </div>
                     </li>
                     @else
                     <li class="nav-item">
@@ -134,6 +140,7 @@
                     @endauth
                 </ul>
             </form>
+            
 
             <!-- Register and Login buttons -->
 
