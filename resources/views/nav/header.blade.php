@@ -125,7 +125,7 @@
                         </a>
                         <div class="dropdown-menu" aria-labelledby="navbarDropdown">
                             <a class="dropdown-item" href="#">Profile</a>
-                            <a class="dropdown-item" href="">Quản lý trạm sạc</a>
+                            <a class="dropdown-item" href="{{ route('tramsac.index') }}">Quản lý trạm sạc</a>
                             <div class="dropdown-divider"></div>
                             <a class="dropdown-item" href="{{ route('user.logout') }}">Đăng Xuất</a>
                         </div>

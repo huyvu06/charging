@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
+use App\Http\Controllers\TramSacController;
 use Illuminate\Http\Request;
 use App\Models\Tramsac;
 use App\Models\User;
@@ -15,6 +16,12 @@ use App\Mail\RegisterStationConfirmationMail;
 class TramSacController extends Controller
 {
 
+    public function index()
+{
+    $user = Auth::user();
+    $stations = TramSac::where('user_id', $user->id)->get();
+    return view('auth.manage_stations', compact('stations'));
+}
   
     public function store(Request $request)
 {
@@ -67,32 +74,19 @@ class TramSacController extends Controller
 
 public function confirm($token)
 {
-    // Find the station by the confirmation token
     $station = TramSac::where('confirmation_token', $token)->first();
 
     if (!$station) {
-        return redirect()->route('tramsac')->with('error', 'Token xác nhận không hợp lệ.');
+        return redirect()->route('home')->with('error', 'Token xác nhận không hợp lệ.');
     }
 
-    // Activate the station
-    $station->is_activated = true;
-    $station->confirmation_token = null; // Optional: clear the token after confirmation
+    $station->status = 1;
+    $station->confirmation_token = null;
     $station->save();
 
-    return redirect()->route('home')->with('success', 'Trạm sạc đã được kích hoạt thành công.');
+    return redirect()->route('tramsac.index')->with('success', 'Trạm sạc đã được xác nhận thành công.');
 }
 
-public function index()
-{
-    // Lấy user_id từ người dùng hiện tại
-    $user_id = Auth::id();
-
-    // Lấy danh sách các trạm sạc của người dùng
-    $stations = TramSac::where('user_id', $user_id)->get();
-
-    // Trả về view và truyền dữ liệu
-    return view('auth.manage_stations', compact('stations'));
-}
 
 
 }

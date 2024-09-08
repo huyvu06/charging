@@ -5,7 +5,7 @@ Xin chào,
 
 Cảm ơn bạn đã đăng ký trạm sạc {{ $station->name }}. Vui lòng bấm vào nút dưới đây để xác nhận đăng ký.
 
-@component('mail::button', ['url' => $confirmationUrl])
+@component('mail::button', ['url' => route('tramsac.confirm', ['token' => $station->confirmation_token])])
 Chấp nhận đăng ký
 @endcomponent
 
