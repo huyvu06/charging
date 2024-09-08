@@ -60,7 +60,7 @@ class UserController extends Controller
         if (Auth::attempt($credentials)) {
             // Lưu thông tin người dùng vào session
             session(['user_name' => Auth::user()->name]);
-
+            \Log::info('User logged in:', ['user_id' => Auth::user()->user_id]);
             return redirect()->route('home');
         }
 

@@ -9,6 +9,7 @@
             {{ session('success') }}
         </div>
     @endif
+    <p>Số lượng trạm sạc: {{ $stations->count() }}</p>
     @if($stations->isEmpty())
         <p>Hiện tại bạn chưa đăng ký trạm sạc nào.</p>
     @else

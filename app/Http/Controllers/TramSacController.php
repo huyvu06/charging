@@ -15,15 +15,24 @@ use App\Mail\RegisterStationConfirmationMail;
 
 class TramSacController extends Controller
 {
-
     public function index()
 {
     $user = Auth::user();
-    $stations = TramSac::where('user_id', $user->id)->get();
+    if (!$user) {
+        \Log::error('User not logged in');
+        return redirect()->route('login')->with('error', 'Bạn cần phải đăng nhập để xem trạm sạc.');
+    }
+
+    // Debugging: Check if user_id is correct
+    \Log::info('Current User ID:', ['user_id' => $user->id]);
+
+    $stations = TramSac::where('user_id', $user->user_id)->where('status', 1)->get();
+    \Log::info('Stations:', $stations->toArray());
+
     return view('auth.manage_stations', compact('stations'));
 }
-  
-    public function store(Request $request)
+
+public function store(Request $request)
 {
     // Kiểm tra nếu người dùng chưa đăng nhập
     if (!Auth::check()) {
@@ -33,12 +42,19 @@ class TramSacController extends Controller
     // Xác thực các trường yêu cầu
     $request->validate([
         'name' => 'required|string|max:255',
-        'email' => 'required|string|email|unique:tram_sac', 
+        'phone' => 'required|string',
+        'email' => 'required|string|email|unique:tram_sac',
         'name_tramsac' => 'required|string|max:255',
         'address' => 'required|string',
+        'map' => 'required|string', // Đảm bảo map (tọa độ) không rỗng
     ]);
 
     try {
+        // Tách tọa độ kinh độ và vĩ độ từ trường 'map'
+        $coordinates = explode(',', $request->map);
+        $lat = isset($coordinates[0]) ? trim($coordinates[0]) : null;
+        $lon = isset($coordinates[1]) ? trim($coordinates[1]) : null;
+
         // Lấy user_id từ người dùng hiện tại
         $user_id = Auth::id();
 
@@ -49,19 +65,19 @@ class TramSacController extends Controller
             'phone' => $request->input('phone'),
             'name_tramsac' => $request->input('name_tramsac'),
             'content' => $request->input('content'),
-            'map' => $request->input('map'),
+            'map_lat' => $lat,  // Lưu vĩ độ
+            'map_lon' => $lon,  // Lưu kinh độ
             'address' => $request->input('address'),
             'user_id' => $user_id,
             'id_doitac' => null,
             'confirmation_token' => Str::random(40),
-            'is_activated' => false,
-            'status' => 0,
+            'status' => 0, // Mặc định là chưa xác nhận
         ]);
 
         $recipientEmail = 'vuvanhuy.tdc.3557@gmail.com'; // Đặt địa chỉ email của người nhận vào đây
 
-            // Gửi email xác nhận đến người nhận
-            Mail::to($recipientEmail)->send(new RegisterStationConfirmationMail($station));
+        // Gửi email xác nhận đến người nhận
+        Mail::to($recipientEmail)->send(new RegisterStationConfirmationMail($station));
 
         // Chuyển hướng với thông báo thành công
         return redirect()->route('tramsac')->with('success', 'Đã gửi thông tin đăng ký trạm sạc thành công. Vui lòng kiểm tra email để xác nhận.');
@@ -72,21 +88,40 @@ class TramSacController extends Controller
     }
 }
 
+
 public function confirm($token)
 {
+    // Tìm trạm sạc dựa trên token
     $station = TramSac::where('confirmation_token', $token)->first();
 
+    // Nếu không tìm thấy trạm sạc hoặc token không hợp lệ
     if (!$station) {
         return redirect()->route('home')->with('error', 'Token xác nhận không hợp lệ.');
     }
 
+    // Kiểm tra nếu trạm đã được xác nhận trước đó
+    if ($station->status === 1) {
+        return redirect()->route('home')->with('info', 'Trạm sạc đã được xác nhận trước đó.');
+    }
+
+    // Xác nhận trạm sạc và xóa token
     $station->status = 1;
     $station->confirmation_token = null;
     $station->save();
 
-    return redirect()->route('tramsac.index')->with('success', 'Trạm sạc đã được xác nhận thành công.');
+    // Chuyển hướng đến trang quản lý trạm sạc với thông báo thành công
+    return redirect()->route('tramsac.index')->with('success', 'Trạm sạc "' . $station->name . '" đã được xác nhận thành công.');
 }
 
+public function map()
+{
+    // Fetch all stations with their coordinates
+    $stations = TramSac::all();
 
+    // Log the stations data for debugging
+    \Log::info('Stations:', $stations->toArray());
+
+    return view('auth.map', compact('stations'));
+}
 
 }
