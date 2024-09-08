@@ -17,6 +17,6 @@ class HomeController extends Controller
         return view('auth.news');
     }
     public function tramsac(){
-        return view('auth.manage_stations');
+        return view('auth.tramsac');
     }
 }

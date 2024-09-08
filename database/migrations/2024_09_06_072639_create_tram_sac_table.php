@@ -21,7 +21,8 @@ return new class extends Migration {
             $table->string('address'); 
             $table->timestamp('email_verified_at')->nullable();
             $table->unsignedBigInteger('user_id'); 
-            $table->unsignedBigInteger('id_doitac')->nullable(); 
+            $table->unsignedBigInteger('id_doitac')->nullable();
+            $table->boolean('status')->default(0); 
             $table->timestamps(); 
 
             // Thêm khóa ngoại nếu có bảng đối tác và người dùng

@@ -110,7 +110,6 @@
         flex: 1;
         text-align: center;
         padding: 20px 40px 0 40px;
-        background-color: #f0f0f0;
         border-radius: 0 10px 10px 0;
     }
 
@@ -183,7 +182,7 @@
                     </div>
                     <div class="checkbox-group">
                         <input type="checkbox" id="terms" required>
-                        <label for="terms">I agree all statements in <a href="#">Terms of service</a></label>
+                        <label for="terms" style="margin-top:6px">I agree all statements in <a href="#">Terms of service</a></label>
                     </div>
                     <button type="submit">Register</button>
                 </form>

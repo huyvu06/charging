@@ -93,7 +93,7 @@
                 </li>
 
                 <li class="nav-item dropdown pr-3">
-                    <a class="nav-link dropdown-toggle" href="{{ asset('tramsac') }}" id="dropdownId"
+                    <a class="nav-link dropdown-toggle" href="" id="dropdownId"
                         data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" style="color: #707862;"> Dành
                         Cho Đối Tác </a>
                     <div class="dropdown-menu" aria-labelledby="dropdownId">

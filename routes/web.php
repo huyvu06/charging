@@ -22,8 +22,8 @@ use App\Http\Controllers\Admin\AdminController;
 
 
 // Group routes for other pages but without 'auth' prefix in the URL
-Route::get('/home', [HomeController::class, 'Home'])->name('home');
-Route::get('/tramsac', [HomeController::class, 'tramsac'])->name('list');
+Route::get('/', [HomeController::class, 'Home'])->name('home');
+Route::get('/tramsac', [HomeController::class, 'tramsac'])->name('tramsac');
     Route::get('/login', [UserController::class,'login'])->name('login');
     Route::post('/login', [UserController::class,'postLogin']);
 
@@ -67,21 +67,20 @@ Route::get('/tramsac', [HomeController::class, 'tramsac'])->name('list');
 
 
 
-// // routes/web.php
-// Route::prefix('admin')->group(function () {
-//   Route::get('/', [DashBoardController::class, 'index'])->name('admin.index');
-//   // routes/web.php
-//   Route::get('/dashboard', [DashBoardController::class, 'logout'])->name('logout');
+// routes/web.php
+Route::prefix('admin')->group(function () {
+  Route::get('/', [DashBoardController::class, 'index'])->name('admin.index');
+  // routes/web.php
+  Route::get('/dashboard', [DashBoardController::class, 'logout'])->name('logout');
 
-//   Route::get('/', [DashBoardController::class, 'index'])->name('admin.index');
-//   Route::get('/account', [DashBoardController::class, 'account'])->name('admin.account');
-//   Route::get('/news', [DashBoardController::class, 'news'])->name('admin.news');
-//   Route::get('/approval', [DashBoardController::class, 'approval'])->name('admin.approval');
-//   Route::get('/charging-station', [DashBoardController::class, 'chargingStation'])->name('admin.charging-station');
-//   Route::get('/email', [DashBoardController::class, 'email'])->name('admin.email');
-//   Route::get('/settings', [DashBoardController::class, 'settings'])->name('admin.settings');
-
-// });
+  Route::get('/', [DashBoardController::class, 'index'])->name('admin.index');
+  Route::get('/account', [DashBoardController::class, 'account'])->name('admin.account');
+  Route::get('/news', [DashBoardController::class, 'news'])->name('admin.news');
+  Route::get('/approval', [DashBoardController::class, 'approval'])->name('admin.approval');
+  Route::get('/charging-station', [DashBoardController::class, 'chargingStation'])->name('admin.charging-station');
+  Route::get('/email', [DashBoardController::class, 'email'])->name('admin.email');
+  Route::get('/settings', [DashBoardController::class, 'settings'])->name('admin.settings');
+});
 
 
 // Route::get('/dashboard', [DashboardController::class, 'dashboard']);
@@ -91,7 +90,7 @@ Route::get('/tramsac', [HomeController::class, 'tramsac'])->name('list');
 // Route::get('/settings', [DashboardController::class, 'settings']);
 
 // //Admin
-// Route::prefix('admin')->group(function () {
-//   Route::get('/account', [App\Http\Controllers\Admin\UserController::class, 'account'])->name('admin.account');
-//   Route::get('/news', [App\Http\Controllers\Admin\NewsController::class, 'news'])->name('admin.news');
-// });
+Route::prefix('admin')->group(function () {
+  Route::get('/account', [App\Http\Controllers\Admin\UserController::class, 'account'])->name('admin.account');
+  Route::get('/news', [App\Http\Controllers\Admin\NewsController::class, 'news'])->name('admin.news');
+});

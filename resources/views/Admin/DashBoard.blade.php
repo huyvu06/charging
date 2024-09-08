@@ -196,7 +196,7 @@
                 <i class="fas fa-bell"></i>
             </div>
             <div class="notification">
-                <a href="{{route('home')}}">Thoát</a>
+                <a href="{{route('home')}}"><i class="fas fa-sign-out-alt"></i></a>
             </div>
         </div>
     </div>

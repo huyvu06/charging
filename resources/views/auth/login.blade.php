@@ -229,7 +229,7 @@
                 </div>
                 <div class="checkbox-group">
                     <input type="checkbox" id="remember" required>
-                    <label for="remember">Remember me</label>
+                    <label for="remember" style="margin-top:6px">Remember me</label>
                 </div>
                 <button type="submit">Log in</button>
             </form>

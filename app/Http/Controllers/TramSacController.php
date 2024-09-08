@@ -48,6 +48,7 @@ class TramSacController extends Controller
             'id_doitac' => null,
             'confirmation_token' => Str::random(40),
             'is_activated' => false,
+            'status' => 0,
         ]);
 
         $recipientEmail = 'vuvanhuy.tdc.3557@gmail.com'; // Đặt địa chỉ email của người nhận vào đây
