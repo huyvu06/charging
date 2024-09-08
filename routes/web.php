@@ -31,6 +31,9 @@ Route::get('/tramsac', [HomeController::class, 'tramsac'])->name('tramsac');
     Route::post('/sign', [UserController::class,'postSign']);
 
     Route::get('/logout', [UserController::class, 'logout'])->name('user.logout');
+
+    // Hiển thị thông tin cá nhân
+    Route::view('/profile', 'auth.profile')->name('show.profile');
     // lấy địa chỉ rồi hiển thị lên map
     Route::get('/map', [TramSacController::class, 'map'])->name('map');
 
