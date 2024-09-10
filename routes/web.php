@@ -60,17 +60,38 @@ Route::get('/tramsac', [HomeController::class, 'tramsac'])->name('tramsac');
     Route::get('/logon',[AdminController::class,'logon'])->name('logon');
     Route::post('/logon',[AdminController::class,'postLogon'])->name('admin.logon');
     Route::get('/dashboard', [DashBoardController::class, 'logout'])->name('logout');
-    // admin
-    Route::prefix('admin')->middleware('admin')->group(function () {
-      Route::get('/admin', [DashBoardController::class, 'index'])->name('admin.index');
-      Route::get('/account', [DashBoardController::class, 'account'])->name('admin.account');
-      Route::get('/news', [DashBoardController::class, 'news'])->name('admin.news');
-      Route::get('/approval', [DashBoardController::class, 'approval'])->name('admin.approval');
-      Route::get('/charging-station', [DashBoardController::class, 'chargingStation'])->name('admin.charging-station');
-      Route::get('/email', [DashBoardController::class, 'email'])->name('admin.email');
-      Route::get('/settings', [DashBoardController::class, 'settings'])->name('admin.settings');
-      Route::get('/account', [App\Http\Controllers\Admin\UserController::class, 'account'])->name('admin.account');
-      Route::get('/news', [App\Http\Controllers\Admin\NewsController::class, 'news'])->name('admin.news');
-      });
 
+    // Nhóm các route quản trị
+Route::prefix('admin')->name('admin.')->group(function () {
+  // Route cho trang dashboard
+  Route::get('/dashboard', [DashBoardController::class, 'index'])->name('dashboard');
 
+  // Route cho trang đăng xuất
+  Route::get('/logout', [DashBoardController::class, 'logout'])->name('logout');
+
+   // Route cho trang tài khoản
+   Route::get('/account', [App\Http\Controllers\Admin\UserController::class, 'account'])->name('account');
+   Route::post('/account/store', [App\Http\Controllers\Admin\UserController::class, 'store'])->name('store');
+   Route::get('/account/edit/{id}', [App\Http\Controllers\Admin\UserController::class, 'edit'])->name('edit');
+   Route::put('/account/update/{id}', [App\Http\Controllers\Admin\UserController::class, 'update'])->name('update');
+   Route::delete('/account/delete/{id}', [App\Http\Controllers\Admin\UserController::class, 'destroy'])->name('delete');
+ 
+
+  // web.php
+  Route::post('/admin/users', [UserController::class, 'addUser'])->name('admin.addUser');
+
+  // Route cho trang tin tức
+  Route::get('/news', [DashBoardController::class, 'news'])->name('news');
+
+  // Route cho trang phê duyệt
+  Route::get('/approval', [DashBoardController::class, 'approval'])->name('approval');
+
+  // Route cho trang trạm sạc
+  Route::get('/charging', [DashBoardController::class, 'charging'])->name('charging');
+
+  // Route cho trang email
+  Route::get('/email', [DashBoardController::class, 'email'])->name('email');
+
+  // Route cho trang cài đặt
+  Route::get('/settings', [DashBoardController::class, 'settings'])->name('settings');
+});

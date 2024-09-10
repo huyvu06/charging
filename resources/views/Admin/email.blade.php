@@ -1,1 +1,7 @@
-<h2>Đây là email</h2>
+@extends('Admin.Dashboard')
+@section('title', 'email')
+@section('content')
+<h2>ha</h2>
+
+
+@endsection

@@ -1,285 +1,112 @@
-<meta name="csrf-token" content="{{ csrf_token() }}">
 <!DOCTYPE html>
 <html lang="en">
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin Dashboard</title>
+    <title>@yield('title', 'Dashboard')</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <style>
         body {
             font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 0;
-            display: flex;
-            height: 100vh;
-            overflow: hidden;
         }
 
-        .main-container {
-            display: flex;
-            height: 100%;
-            width: 100%;
-            overflow: hidden;
+        /* Navbar styles */
+        .navbar {
+            background-color: #4a90e2; /* Updated color */
         }
 
-        .topbar {
-            width: 100%;
-            height: 60px;
-            background-color: #f8f9fa;
-            display: flex;
-            align-items: center;
-            padding: 0 20px;
-            box-sizing: border-box;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-            justify-content: space-between;
-            z-index: 1;
-            position: fixed;
-            top: 0;
-            left: 0;
+        .navbar-brand {
+            display: none; /* Hide the brand name */
         }
 
-        .topbar .logo {
-            display: flex;
-            align-items: center;
-            font-size: 24px;
-            font-weight: bold;
+        .navbar-nav {
+            flex-direction: row; /* Align items horizontally */
         }
 
-        .topbar .logo i {
-            margin-right: 10px;
-            color: #5a5cff;
+        .navbar-nav .nav-link {
+            color: #ffffff;
+            font-size: 1.1em; /* Slightly larger font size */
         }
 
-        .topbar .container {
-            display: flex;
-            align-items: center;
-            gap: 20px;
-            margin-left: auto;
+        .navbar-nav .nav-link:hover {
+            color: #f1f1f1; /* Light gray for hover effect */
         }
 
-        .topbar .search {
-            position: relative;
+        .navbar-nav .nav-item {
+            margin-left: 15px; /* Space out nav items */
         }
 
-        .topbar .search input {
-            width: 200px;
-            padding: 8px 12px;
-            border-radius: 20px;
-            border: 1px solid #ccc;
-            box-sizing: border-box;
-        }
-
-        .topbar .notification,
-        .topbar .mail,
-        .topbar .hamburger {
-            font-size: 18px;
-            color: #666;
-            cursor: pointer;
-        }
-
-        .topbar .hamburger {
-            font-size: 24px;
-            margin-left: 20px;
-        }
-
-        .sidebar {
-            width: 250px;
-            height: calc(100vh - 60px);
-            background-color: #f8f9fa;
-            padding: 20px;
-            box-sizing: border-box;
-            display: flex;
-            flex-direction: column;
-            position: fixed;
-            left: 0;
-            top: 60px;
-            transition: transform 0.3s ease;
-            transform: translateX(0);
-            z-index: 2;
-        }
-
-        .sidebar.collapsed {
-            width: 80px;
-        }
-
-        .sidebar .logo {
-            display: flex;
-            align-items: center;
-            font-size: 24px;
-            font-weight: bold;
-            margin-bottom: 20px;
-            display: none;
-        }
-
-        .sidebar.collapsed .logo {
-            display: none;
-        }
-
-        .sidebar.collapsed .menu-item span {
-            display: none;
-        }
-
-        nav {
-            flex-grow: 1;
-        }
-
-        ul {
-            list-style-type: none;
-            padding: 0;
-            margin: 0;
-        }
-
-        li {
-            padding: 10px 0;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            color: #666;
-        }
-
-        li i {
-            margin-right: 10px;
-            width: 20px;
-            font-size: 18px;
-            transition: font-size 0.3s ease;
-        }
-
-        .sidebar.collapsed li i {
-            font-size: 26px;
-        }
-
-        li span {
-            display: inline;
-        }
-
-        .sidebar.collapsed li span {
-            display: none;
-        }
-
-        li.active {
-            color: #5a5cff;
-            font-weight: bold;
+        .navbar-toggler {
+            border: none;
         }
 
         .content {
-            margin-left: 250px;
-            padding: 20px;
-            flex-grow: 1;
-            overflow-y: auto;
-            transition: margin-left 0.3s ease;
-            margin-top: 60px;
-            /* Space for topbar */
+            margin-top: 56px; /* Adjust based on navbar height */
         }
 
-        .sidebar.collapsed~.content {
-            margin-left: 80px;
+        .container-fluid {
+            padding: 20px;
+        }
+
+        .nav-icon {
+            font-size: 1.3em; /* Larger icons */
+        }
+        
+        /* Style for the icon list */
+        .navbar-nav.ml-auto {
+            display: flex;
+            align-items: center;
+            margin-left: auto; /* Move icons to the right */
+        }
+        
+        .navbar-nav.ml-auto .nav-item {
+            margin-left: 10px; /* Space out icons */
         }
     </style>
 </head>
 
 <body>
-    <div class="topbar">
-        <div class="logo">
-            <i class="fas fa-credit-card"></i>
-            <span>Bankdash</span>
-            <div class="hamburger">
-                <i class="fas fa-bars" style="color: black;"></i>
-            </div>
-        </div>
-        <div class="container">
-            <div class="search">
-                <input type="text" placeholder="Search...">
-            </div>
-            <div class="notification">
-                <i class="fas fa-bell"></i>
-            </div>
-            <div class="notification">
-                <a href="{{route('home')}}"><i class="fas fa-sign-out-alt"></i></a>
-            </div>
-        </div>
-    </div>
-    <div class="sidebar">
-        <nav>
-            <ul>
-                <li class="active" data-url="{{ url('/dashboard') }}"><i class="fas fa-home"></i><span> Dashboard</span>
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-dark">
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav mr-auto">
+                <li class="nav-item active">
+                    <a class="nav-link" href="{{ route('admin.account') }}"><i class="fas fa-user nav-icon"></i> Tài khoản <span class="sr-only">(current)</span></a>
                 </li>
-                <li data-url="{{ route('admin.account') }}"><i class="fas fa-user"></i><span> Tài Khoản</span></li>
-                <li data-url="{{ route('admin.news') }}"><i class="fas fa-newspaper"></i><span> Tin tức</span></li>
-                <li data-url="{{ route('admin.approval') }}"><i class="fas fa-check-circle"></i><span> Phê Duyệt</span>
+                <li class="nav-item">
+                    <a class="nav-link" href="{{ route('admin.news') }}"><i class="fas fa-newspaper nav-icon"></i> Tin tức</a>
                 </li>
-                <li data-url="{{ route('admin.charging-station') }}"><i class="fas fa-plug"></i><span> Trạm Sạc</span>
+                <li class="nav-item">
+                    <a class="nav-link" href="{{ route('admin.approval') }}"><i class="fas fa-check nav-icon"></i> Phê duyệt</a>
                 </li>
-                <li data-url="{{ route('admin.email') }}"><i class="fas fa-envelope"></i><span> Email</span></li>
-                <li data-url="{{ route('admin.settings') }}"><i class="fas fa-cog"></i><span> Cài Đặt</span></li>
-
-                <li><i class="fas fa-user"></i><span>
-                        @auth
-                            {{ Auth::user()->name }}
-
-
-                        @else
-                            Khách
-                        @endauth
-                    </span></li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{{ route('admin.email') }}"><i class="fas fa-envelope nav-icon"></i> Email</a>
+                </li>
             </ul>
-        </nav>
-    </div>
-    <div class="main-container">
-        <div class="content">
-            <!-- Content will be dynamically loaded here -->
-            <h2>Welcome to the Admin Dashboard</h2>
-            <p>Select a menu item to load content here.</p>
+            <ul class="navbar-nav ml-auto">
+                <li class="nav-item">
+                    <a class="nav-link" href="#"><i class="fas fa-bell nav-icon"></i></a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#"><i class="fas fa-sign-out-alt nav-icon"></i></a>
+                </li>
+            </ul>
         </div>
-    </div>
-    <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            const menuItems = document.querySelectorAll('.sidebar nav ul li');
-            const toggleBtn = document.querySelector('.topbar .hamburger');
-            const sidebar = document.querySelector('.sidebar');
-            const contentArea = document.querySelector('.content');
+    </nav>
 
-            menuItems.forEach(item => {
-                item.addEventListener('click', function () {
-                    menuItems.forEach(i => i.classList.remove('active'));
-                    this.classList.add('active');
+    <!-- JS Libraries -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    
+    @yield('content')
 
-                    const url = this.getAttribute('data-url');
-                    if (url) {
-                        loadContent(url);
-                    }
-                });
-            });
 
-            toggleBtn.addEventListener('click', function () {
-                sidebar.classList.toggle('collapsed');
-            });
-
-            function loadContent(url) {
-                fetch(url, {
-                    headers: {
-                        'X-Requested-With': 'XMLHttpRequest'
-                    }
-                })
-                    .then(response => {
-                        if (!response.ok) {
-                            throw new Error('Network response was not ok');
-                        }
-                        return response.text();
-                    })
-                    .then(data => {
-                        contentArea.innerHTML = data;
-                    })
-                    .catch(error => {
-                        contentArea.innerHTML = '<h2>Error</h2><p>Unable to load content.</p>';
-                        console.error('Error loading content:', error);
-                        console.error('URL:', url);
-                        console.error('Error details:', error.message);
-                    });
-            }
-        });
-    </script>
-</body>
+</body> 
 
 </html>

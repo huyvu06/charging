@@ -1,154 +1,164 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Stylish Table</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-    <style>
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            margin: 0;
-            padding: 0;
-            background-color: #f4f4f4;
-            color: #333;
-        }
+    @extends('Admin.Dashboard')
+    @section('title', 'News')
+    @section('content')
 
-        h1 {
-            text-align: center;
-            color: #444;
-            margin-bottom: 20px;
-            font-size: 2em;
-        }
+    <div class="container mt-4">
+        <h2>Table News Articles</h2>
 
-        .btn {
-            display: inline-flex;
-            align-items: center;
-            padding: 8px 12px;
-            font-size: 1em;
-            color: #ffffff;
-            background-color: #007bff;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            text-decoration: none;
-            margin-bottom: 20px;
-        }
+        <!-- Display Success Message -->
+        @if (session('success'))
+            <div class="alert alert-success">
+                {{ session('success') }}
+            </div>
+        @endif
 
-        .btn:hover {
-            background-color: #0056b3;
-        }
+        <!-- Add News Button -->
+        <button type="button" class="btn btn-success mt-4" data-toggle="modal" data-target="#addNewsModal">
+            Thêm Tin Tức
+        </button>
 
-        .btn i {
-            margin-right: 5px;
-        }
-
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin: 0 auto;
-        }
-
-        thead {
-            background-color: #007bff;
-            color: #ffffff;
-        }
-
-        th, td {
-            padding: 12px;
-            text-align: center; /* Center align text in table cells */
-            border: 1px solid #ddd;
-            vertical-align: middle;
-        }
-
-        th {
-            font-weight: 600;
-            border-bottom: 2px solid #007bff;
-        }
-
-        tbody tr {
-            transition: background-color 0.3s ease;
-        }
-
-        tbody tr:nth-child(even) {
-            background-color: #f9f9f9;
-        }
-
-        tbody tr:hover {
-            background-color: #e2e6ea;
-        }
-
-        td {
-            border-bottom: 1px solid #ddd;
-        }
-
-        .status-active {
-            color: #28a745;
-            font-weight: bold;
-        }
-
-        .status-inactive {
-            color: #dc3545;
-            font-weight: bold;
-        }
-
-        .action-buttons {
-            display: flex;
-            gap: 10px;
-            justify-content: center; /* Center align action buttons */
-        }
-
-        .action-buttons a {
-            color: #007bff;
-            text-decoration: none;
-            font-size: 1.2em;
-            margin: 0 5px;
-        }
-
-        .action-buttons a:hover {
-            color: #0056b3;
-        }
-
-        .action-buttons .delete {
-            color: #dc3545;
-        }
-    </style>
-</head>
-<body>
-    <div class="container">
-        <h1>News Table</h1>
-        <a href="#" class="btn"><i class="fas fa-plus"></i>Thêm</a>
-        <table>
+        <!-- News Table -->
+        <table class="table table-bordered mt-3">
             <thead>
                 <tr>
                     <th>ID</th>
-                    <th>Tiêu Đề</th>
-                    <th>Hình Ảnh</th>
-                    <th>Nội Dung</th>
-                    <th>Bình Luận</th>
-                    <th>Ngày Tạo</th>
-                    <th>Ngày Cập Nhật</th>
-                    <th>Tùy Chọn</th>
+                    <th>Title</th>
+                    <th>Image</th>
+                    <th>Content</th>
+                    <th>Comments</th>
+                    <th>Options</th>
                 </tr>
             </thead>
             <tbody>
-            @foreach ($news as $new)
-                <tr>
-                    <td>{{ $new->id_news }}</td>
-                    <td>{{ $new->title }}</td>
-                    <td>{{ $new->image }}</td>
-                    <td>{{ $new->content ?? 'N/A' }}</td>
-                    <td>{{ $new->binhluan ?? 'N/A' }}</td>
-                    <td>{{ $new->created_at ?? 'N/A' }}</td>
-                    <td>{{ $new->updated_at ?? 'N/A' }}</td>
-                    <td class="action-buttons">
-                        <a href="#" class="edit"><i class="fas fa-edit"></i>Sửa</a>
-                        <a href="#" class="delete"><i class="fas fa-trash"></i>Xóa</a>
-                    </td>
-                </tr>
-            @endforeach
+                @foreach($news as $item)
+                    <tr>
+                        <td>{{ $item->id }}</td>
+                        <td>{{ $item->title }}</td>
+                        <td>
+                            @if($item->image)
+                                <img src="{{ asset('storage/' . $item->image) }}" alt="Image" style="width: 100px; height: auto;">
+                            @else
+                                No Image
+                            @endif
+                        </td>
+                        <td>{{ Str::limit($item->content, 50) }}</td>
+                        <td>{{ $item->comments_count }}</td>
+                        <td>
+                            <!-- Edit Button -->
+                            <a href="#editNewsModal{{ $item->id }}" class="btn btn-primary btn-sm"
+                                data-toggle="modal">Sửa</a>
+
+                            <!-- Delete Button -->
+                            <form action="{{ route('admin.news.delete', $item->id) }}" method="POST" style="display:inline;">
+                                @csrf
+                                @method('DELETE')
+                                <button type="submit" class="btn btn-danger btn-sm"
+                                    onclick="return confirm('Bạn có chắc muốn xóa tin tức này không?')">
+                                    Xóa
+                                </button>
+                            </form>
+                        </td>
+                    </tr>
+
+                    <!-- Edit News Modal -->
+                    <div class="modal fade" id="editNewsModal{{ $item->id }}" tabindex="-1" role="dialog"
+                        aria-labelledby="editNewsModalLabel{{ $item->id }}" aria-hidden="true">
+                        <div class="modal-dialog" role="document">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title" id="editNewsModalLabel{{ $item->id }}">Chỉnh sửa tin tức</h5>
+                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                        <span aria-hidden="true">&times;</span>
+                                    </button>
+                                </div>
+                                <div class="modal-body">
+                                    <form action="{{ route('admin.news.update', $item->id) }}" method="POST" enctype="multipart/form-data">
+                                        @csrf
+                                        @method('PUT')
+                                        <div class="form-group">
+                                            <label for="title">Title:</label>
+                                            <input type="text" name="title" class="form-control" value="{{ $item->title }}"
+                                                required>
+                                            @error('title')
+                                                <div class="text-danger">{{ $message }}</div>
+                                            @enderror
+                                        </div>
+
+                                        <div class="form-group">
+                                            <label for="image">Image (Leave empty if not changing):</label>
+                                            <input type="file" name="image" class="form-control">
+                                            @error('image')
+                                                <div class="text-danger">{{ $message }}</div>
+                                            @enderror
+                                        </div>
+
+                                        <div class="form-group">
+                                            <label for="content">Content:</label>
+                                            <textarea name="content" class="form-control" rows="4" required>{{ $item->content }}</textarea>
+                                            @error('content')
+                                                <div class="text-danger">{{ $message }}</div>
+                                            @enderror
+                                        </div>
+
+                                        <button type="submit" class="btn btn-primary mt-2">Cập nhật</button>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                @endforeach
             </tbody>
         </table>
+
+        <!-- Add News Modal -->
+        <div class="modal fade" id="addNewsModal" tabindex="-1" role="dialog" aria-labelledby="addNewsModalLabel"
+            aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="addNewsModalLabel">Thêm Tin Tức Mới</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <form action="{{ route('admin.news.store') }}" method="POST" enctype="multipart/form-data">
+                            @csrf
+                            <div class="form-group">
+                                <label for="title">Title:</label>
+                                <input type="text" name="title" class="form-control" value="{{ old('title') }}" required>
+                                @error('title')
+                                    <div class="text-danger">{{ $message }}</div>
+                                @enderror
+                            </div>
+
+                            <div class="form-group">
+                                <label for="image">Image:</label>
+                                <input type="file" name="image" class="form-control" required>
+                                @error('image')
+                                    <div class="text-danger">{{ $message }}</div>
+                                @enderror
+                            </div>
+
+                            <div class="form-group">
+                                <label for="content">Content:</label>
+                                <textarea name="content" class="form-control" rows="4" required>{{ old('content') }}</textarea>
+                                @error('content')
+                                    <div class="text-danger">{{ $message }}</div>
+                                @enderror
+                            </div>
+
+                            <button type="submit" class="btn btn-success mt-2">Thêm Tin Tức</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
-</body>
-</html>
+
+    <!-- Include JS libraries (only needed for Bootstrap modals) -->
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+    @endsection
