@@ -26,6 +26,7 @@ class UserController extends Controller
     // Xác thực dữ liệu đầu vào
     $validatedData = $req->validate([
         'name' => 'required',
+        'role' => 'required',
         'email' => 'required|email',
         'password' => 'required|min:6',
     ]);

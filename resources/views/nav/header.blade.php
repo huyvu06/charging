@@ -95,15 +95,20 @@
                     </div>
                 </li>
 
-                <li class="nav-item dropdown pr-3">
-                    <a class="nav-link dropdown-toggle" href="" id="dropdownId"
-                        data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" style="color: #707862;"> Dành
-                        Cho Đối Tác </a>
-                    <div class="dropdown-menu" aria-labelledby="dropdownId">
-                        <a class="dropdown-item" href="{{ asset('#') }}"> Giải Pháp Quản Lý </a>
-                        <a class="dropdown-item" href="{{ route('tramsac') }}"> Đăng Ký Trạm Sạc </a>
-                    </div>
-                </li>
+                @auth
+                @if (Auth::user()->role == 2)
+                    <li class="nav-item dropdown pr-3">
+                        <a class="nav-link dropdown-toggle" href="" id="dropdownId"
+                            data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" style="color: #707862;"> Dành
+                            Cho Đối Tác </a>
+                        <div class="dropdown-menu" aria-labelledby="dropdownId">
+                            <a class="dropdown-item" href="{{ asset('#') }}"> Giải Pháp Quản Lý </a>
+                            <a class="dropdown-item" href="{{ route('tramsac') }}"> Đăng Ký Trạm Sạc </a>
+                        </div>
+                    </li>
+                @endif
+            @endauth
+            
                 <div class="collapse navbar-collapse" id="navbarNav">
                     <ul class="navbar-nav">
                         <li class="nav-item active">
@@ -122,13 +127,19 @@
             
                 <ul class="navbar-nav ml-auto">
                     @auth
+                    <!-- User Dropdown -->
                     <li class="nav-item dropdown">
                         <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                             {{ Auth::user()->name }}
                         </a>
                         <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-                            <a class="dropdown-item" href="{{route('show.profile')}}">Profile</a>
-                            <a class="dropdown-item" href="{{ route('tramsac.index') }}">Quản lý trạm sạc</a>
+                            <a class="dropdown-item" href="{{ route('show.profile') }}">Profile</a>
+                
+                            <!-- Only show this link if the user role is not 0 (e.g., if role is 2 for customers) -->
+                            @if (Auth::user()->role != 0)
+                                <a class="dropdown-item" href="{{ route('tramsac.index') }}">Quản lý trạm sạc</a>
+                            @endif
+                
                             <div class="dropdown-divider"></div>
                             <a class="dropdown-item" href="{{ route('user.logout') }}">Đăng Xuất</a>
                         </div>

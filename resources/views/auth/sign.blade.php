@@ -175,6 +175,13 @@
                         @enderror
                     </div>
                     <div class="form-group">
+                        <label for="role">Chọn quyền</label>
+                        <select name="role" id="role" required>
+                            <option value="0" {{ old('role') == '0' ? 'selected' : '' }}>User</option>
+                            <option value="2" {{ old('role') == '2' ? 'selected' : '' }}>Khách hàng</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
                         <i class="fas fa-lock"></i>
                         <input type="password" id="password" placeholder="Mật khẩu" name="password" required>
                         <i class="fas fa-eye toggle-password" onclick="togglePassword()"></i>
