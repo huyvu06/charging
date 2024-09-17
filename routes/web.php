@@ -34,6 +34,10 @@ Route::get('/tramsac', [HomeController::class, 'tramsac'])->name('tramsac');
 
     // Hiển thị thông tin cá nhân
     Route::get('/profile', [UserController::class, 'showProfile'])->name('show.profile');
+    // routes/web.php
+    Route::get('/verify', [UserController::class, 'showVerifyForm'])->name('verify');
+    Route::post('/verify', [UserController::class, 'verifyToken']);
+
     // lấy địa chỉ rồi hiển thị lên map
     Route::get('/map', [TramSacController::class, 'map'])->name('map');
 

@@ -9,7 +9,9 @@ use App\Models\UserProfile;
 use Hash;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use App\Mail\VerificationMail;
 use Illuminate\Support\Facades\Mail;
+
 use Illuminate\Support\Facades\Session;
 class UserController extends Controller
 {
@@ -25,7 +27,7 @@ class UserController extends Controller
   
     public function postSign(Request $req)
 {
-    // Xác thực dữ liệu đầu vào
+   
     $validatedData = $req->validate([
         'role' => 'required',
         'email' => 'required|email',
@@ -43,18 +45,17 @@ class UserController extends Controller
             ->withInput();
     }
 
-   
     DB::beginTransaction();
 
     try {
-       
+    
         $user = User::create([
             'email' => $validatedData['email'],
             'password' => Hash::make($validatedData['password']),
             'role' => $validatedData['role'],
         ]);
 
-        
+      
         UserProfile::create([
             'name' => $validatedData['name'],
             'phone' => $validatedData['phone'] ?? null, 
@@ -63,21 +64,56 @@ class UserController extends Controller
             'user_id' => $user->id,
         ]);
 
-       
+        // Tạo mã xác thực 6 số
+        $token = rand(100000, 999999);
+        \Log::info('Verification token:', ['token' => $token]);
+        $user->update(['verification_token' => $token]);
+
+        Mail::to($user->email)->send(new VerificationMail($token));
         DB::commit();
 
     } catch (\Throwable $th) {
-       
         DB::rollBack();
-
         dd($th->getMessage(), $th->getTrace());
-
         return redirect()->back()
             ->withErrors(['error' => 'Đã xảy ra lỗi khi tạo tài khoản và hồ sơ.'])
             ->withInput();
     }
 
-    return redirect()->route('login')->with('success', 'Đăng ký thành công. Vui lòng đăng nhập.');
+    return redirect()->route('verify')->with('success', 'Đăng ký thành công. Vui lòng kiểm tra email để xác thực.');
+}
+
+
+    
+
+
+
+public function showVerifyForm()
+{
+    return view('auth.verify');
+}
+
+public function verifyToken(Request $request)
+{
+    $request->validate([
+        'token' => 'required|string|digits:6',
+    ]);
+
+    $user = Auth::user();
+
+    \Log::info('User:', ['user' => $user]);
+    \Log::info('Token:', ['input_token' => $request->input('token')]);
+
+    if (!$user) {
+        return redirect()->route('login')->with('error', 'Bạn cần đăng nhập để xác thực.');
+    }
+
+    if ($user->verification_token === $request->input('token')) {
+        $user->update(['verification_token' => null]); 
+        return redirect()->route('login')->with('success', 'Xác thực thành công. Bạn có thể đăng nhập.');
+    } else {
+        return redirect()->back()->with('error', 'Mã xác thực không đúng.');
+    }
 }
 
 
