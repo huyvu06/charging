@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\User;
+use App\Models\UserProfile;
 use Hash;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -21,37 +22,66 @@ class UserController extends Controller
         return view('auth.sign');
     }
 
+  
     public function postSign(Request $req)
 {
     // Xác thực dữ liệu đầu vào
     $validatedData = $req->validate([
-        'name' => 'required',
         'role' => 'required',
         'email' => 'required|email',
         'password' => 'required|min:6',
+        'name' => 'required|string|max:255',
+        'phone' => 'nullable|string|max:255', 
+        'address' => 'nullable|string|max:255',
+        'sex' => 'nullable|in:male,female',
     ]);
 
+   
     if (User::where('email', $req->email)->exists()) {
-        
         return redirect()->back()
             ->withErrors(['email' => 'Email này đã được sử dụng để đăng ký tài khoản.'])
             ->withInput();
     }
-    $validatedData['password'] = Hash::make($req->password);
+
+   
+    DB::beginTransaction();
 
     try {
-      
-        User::create($validatedData);
-    } catch (\Throwable $th) {
+       
+        $user = User::create([
+            'email' => $validatedData['email'],
+            'password' => Hash::make($validatedData['password']),
+            'role' => $validatedData['role'],
+        ]);
+
         
+        UserProfile::create([
+            'name' => $validatedData['name'],
+            'phone' => $validatedData['phone'] ?? null, 
+            'address' => $validatedData['address'] ?? null, 
+            'sex' => $validatedData['sex'] ?? null, 
+            'user_id' => $user->id,
+        ]);
+
+       
+        DB::commit();
+
+    } catch (\Throwable $th) {
+       
+        DB::rollBack();
+
+        dd($th->getMessage(), $th->getTrace());
+
         return redirect()->back()
-            ->withErrors(['error' => 'Đã xảy ra lỗi khi tạo tài khoản.'])
+            ->withErrors(['error' => 'Đã xảy ra lỗi khi tạo tài khoản và hồ sơ.'])
             ->withInput();
     }
 
-    
     return redirect()->route('login')->with('success', 'Đăng ký thành công. Vui lòng đăng nhập.');
 }
+
+
+    
 
     public function logout(Request $request)
     {
@@ -79,6 +109,12 @@ class UserController extends Controller
         return redirect()->back()->with('error', 'Thông tin đăng nhập không đúng.');
     }
     
-    
+    public function showProfile()
+{
+    $user = Auth::user()->load('userProfile');
+
+    return view('auth.profile', ['user' => $user]);
+}
+
 
 }

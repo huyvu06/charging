@@ -138,10 +138,6 @@
             <input type="tel" id="phone" name="phone" required value="{{ old('phone') }}">
         </div>
         <div class="form-group">
-            <label for="email">Email(*):</label>
-            <input type="email" id="email" name="email" required value="{{ old('email') }}">
-        </div>
-        <div class="form-group">
             <label for="name_tramsac">Tên Trạm Sạc(*):</label>
             <input type="text" id="name_tramsac" name="name_tramsac" required value="{{ old('name_tramsac') }}">
         </div>

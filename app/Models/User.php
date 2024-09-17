@@ -6,6 +6,8 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Database\Eloquent\Relations\HasOne;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Laravel\Sanctum\HasApiTokens;
 
 class User extends Authenticatable
@@ -17,10 +19,13 @@ class User extends Authenticatable
      *
      * @var array<int, string>
      */
-    protected $fillable = [
-       'user_id', 'name', 'email', 'password', 'role',
+    protected $table = 'users';
+    protected $fillable = [ 
+       'email', 
+       'password', 
+       'role',
     ];
-    protected $primaryKey = 'user_id';
+    // protected $primaryKey = 'user_id';
     /**
      * The attributes that should be hidden for serialization.
      *
@@ -39,4 +44,18 @@ class User extends Authenticatable
     protected $casts = [
         'email_verified_at' => 'datetime',
     ];
+     /**
+     * Define a one-to-one relationship with the UserProfile model.
+     *
+     * @return HasOne
+     */
+    public function userProfile(): HasOne
+    {
+        return $this->hasOne(UserProfile::class, 'user_id', 'id');
+    }
+
+    public function tramSacs(): HasMany
+    {
+        return $this->hasMany(TramSac::class, 'user_id', 'id');
+    }
 }

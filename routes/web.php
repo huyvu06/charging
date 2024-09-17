@@ -33,7 +33,7 @@ Route::get('/tramsac', [HomeController::class, 'tramsac'])->name('tramsac');
     Route::get('/logout', [UserController::class, 'logout'])->name('user.logout');
 
     // Hiển thị thông tin cá nhân
-    Route::view('/profile', 'auth.profile')->name('show.profile');
+    Route::get('/profile', [UserController::class, 'showProfile'])->name('show.profile');
     // lấy địa chỉ rồi hiển thị lên map
     Route::get('/map', [TramSacController::class, 'map'])->name('map');
 
@@ -76,7 +76,6 @@ Route::prefix('admin')->name('admin.')->group(function () {
    Route::put('/account/update/{id}', [App\Http\Controllers\Admin\UserController::class, 'update'])->name('update');
    Route::delete('/account/delete/{id}', [App\Http\Controllers\Admin\UserController::class, 'destroy'])->name('delete');
  
-
   // web.php
   Route::post('/admin/users', [UserController::class, 'addUser'])->name('admin.addUser');
 

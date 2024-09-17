@@ -20,12 +20,10 @@
             border-radius: 10px;
             padding: 10px 0;
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-            /* Thêm hiệu ứng đổ bóng nhẹ */
             right: 0;
             left: auto;
             top: 100%;
             position: absolute;
-            /* Đảm bảo menu có thể được định vị */
         }
 
         .dropdown-menu .dropdown-item {
@@ -129,13 +127,13 @@
                     @auth
                     <!-- User Dropdown -->
                     <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                            {{ Auth::user()->name }}
+                        <a class="nav-link dropdown-toggle" href="#" style=" color: rgb(252, 253, 255); font-size: 20px" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            {{ Auth::user()->userProfile->name }}
                         </a>
                         <div class="dropdown-menu" aria-labelledby="navbarDropdown">
                             <a class="dropdown-item" href="{{ route('show.profile') }}">Profile</a>
                 
-                            <!-- Only show this link if the user role is not 0 (e.g., if role is 2 for customers) -->
+                           
                             @if (Auth::user()->role != 0)
                                 <a class="dropdown-item" href="{{ route('tramsac.index') }}">Quản lý trạm sạc</a>
                             @endif
@@ -156,8 +154,7 @@
             </form>
             
 
-            <!-- Register and Login buttons -->
-
+    
         </div>
     </nav>
 

@@ -16,25 +16,26 @@ use App\Mail\RegisterStationConfirmationMail;
 class TramSacController extends Controller
 {
     public function index()
-{
-    $user = Auth::user();
-    if (!$user) {
-        \Log::error('User not logged in');
-        return redirect()->route('login')->with('error', 'Bạn cần phải đăng nhập để xem trạm sạc.');
+    {
+        $user = Auth::user();
+        if (!$user) {
+            \Log::error('User not logged in');
+            return redirect()->route('login')->with('error', 'Bạn cần phải đăng nhập để xem trạm sạc.');
+        }
+    
+        // Debugging: Check if user_id is correct
+        \Log::info('Current User ID:', ['user_id' => $user->id]);
+    
+        // Sử dụng 'id' thay vì 'user_id' để lọc các trạm sạc
+        $stations = TramSac::where('user_id', $user->id)->where('status', 1)->get();
+        \Log::info('Stations:', $stations->toArray());
+    
+        return view('auth.manage_stations', compact('stations'));
     }
-
-    // Debugging: Check if user_id is correct
-    \Log::info('Current User ID:', ['user_id' => $user->id]);
-
-    $stations = TramSac::where('user_id', $user->user_id)->where('status', 1)->get();
-    \Log::info('Stations:', $stations->toArray());
-
-    return view('auth.manage_stations', compact('stations'));
-}
+    
 
 public function store(Request $request)
 {
-
     if (!Auth::check()) {
         return redirect()->route('login')->with('error', 'Bạn cần phải đăng nhập để thực hiện thao tác này.');
     }
@@ -43,7 +44,6 @@ public function store(Request $request)
     $request->validate([
         'name' => 'required|string|max:255',
         'phone' => 'required|string',
-        'email' => 'required|string|email|unique:tram_sac',
         'name_tramsac' => 'required|string|max:255',
         'image' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048',
         'address' => 'required|string',
@@ -58,12 +58,12 @@ public function store(Request $request)
         $lat = isset($coordinates[0]) ? trim($coordinates[0]) : null;
         $lon = isset($coordinates[1]) ? trim($coordinates[1]) : null;
         $imageName = base64_encode(file_get_contents($request->file('image')->path()));
-        
-        $user_id = Auth::id();
+
+        $user = Auth::user();
 
         $station = TramSac::create([
             'name' => $request->input('name'),
-            'email' => $request->input('email'),
+            'email' => $user->email, // Sử dụng email của người dùng đang đăng nhập
             'phone' => $request->input('phone'),
             'name_tramsac' => $request->input('name_tramsac'),
             'image' => $imageName,
@@ -73,14 +73,14 @@ public function store(Request $request)
             'address' => $request->input('address'),
             'loai_tram' => $request->input('loai_tram'),
             'loai_sac' => $request->input('loai_sac'),
-            'user_id' => $user_id,
+            'user_id' => $user->id,
             'id_doitac' => null,
             'confirmation_token' => Str::random(40),
             'status' => 0, 
         ]);
 
         $recipientEmail = 'vuvanhuy.tdc.3557@gmail.com'; 
-        // Gửi email xác nhận đến người nhận
+
         Mail::to($recipientEmail)->send(new RegisterStationConfirmationMail($station));
 
         return redirect()->route('tramsac')->with('success', 'Đã gửi thông tin đăng ký trạm sạc thành công. Vui lòng kiểm tra email để xác nhận.');
@@ -88,6 +88,7 @@ public function store(Request $request)
         return back()->with('error', 'Có lỗi xảy ra khi đăng ký trạm sạc: ' . $e->getMessage());
     }
 }
+
 
 
 public function confirm($token)

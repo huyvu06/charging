@@ -175,12 +175,28 @@
                         @enderror
                     </div>
                     <div class="form-group">
+                        <i class="fas fa-envelope"></i>
+                        <input type="phone" placeholder="Số điện thoại của bạn" name="phone" value="{{ old('phone') }}" required>
+                        @error('email')
+                            <div class="text-danger">{{ $message }}</div>
+                        @enderror
+                    </div>
+                    <div class="form-group">
                         <label for="role">Chọn quyền</label>
                         <select name="role" id="role" required>
                             <option value="0" {{ old('role') == '0' ? 'selected' : '' }}>User</option>
                             <option value="2" {{ old('role') == '2' ? 'selected' : '' }}>Khách hàng</option>
                         </select>
                     </div>
+                    <div class="form-group">
+                        <label for="sex">Giới tính</label><br>
+                        <input type="radio" id="male" name="sex" value="male" {{ old('sex') == 'male' ? 'checked' : '' }}>
+                        <label for="male">Nam</label>
+                    
+                        <input type="radio" id="female" name="sex" value="female" {{ old('sex') == 'female' ? 'checked' : '' }}>
+                        <label for="female">Nữ</label>
+                    </div>
+                    
                     <div class="form-group">
                         <i class="fas fa-lock"></i>
                         <input type="password" id="password" placeholder="Mật khẩu" name="password" required>
