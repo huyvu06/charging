@@ -36,23 +36,23 @@ class UserController extends Controller
     }
 
     // Hiển Thị nội dữ liệu người dùng 
-    public function edit($user_id)
+    public function edit($id)
     {
-        $user = User::findOrFail($user_id); // Sử dụng user_id
+        $user = User::findOrFail($id); // Sử dụng id
         return view('Admin.edit', compact('user'));
     }
 
     // Sửa dữ liệu người dùng
-    public function update(Request $request, $user_id)
+    public function update(Request $request, $id)
     {
         $request->validate([
             'name' => 'required|string|max:255',
-            'email' => 'required|email|unique:users,email,' . $user_id . ',user_id', // Sử dụng user_id
+            'email' => 'required|email|unique:users,email,' . $id . ',id', // Sử dụng id
             'role' => 'required|string|max:255',
             'password' => 'nullable|string|min:6',
         ]);
 
-        $user = User::findOrFail($user_id); // Sử dụng user_id
+        $user = User::findOrFail($id); // Sử dụng id
         $user->name = $request->name;
         $user->email = $request->email;
         $user->role = $request->role;
@@ -65,9 +65,9 @@ class UserController extends Controller
     }
 
     // Xóa người dùng
-    public function destroy($user_id)
+    public function destroy($id)
     {
-        $user = User::findOrFail($user_id); // Sử dụng user_id
+        $user = User::findOrFail($id); // Sử dụng id
         $user->delete();
 
         return redirect()->route('admin.account')->with('success', 'Xóa người dùng thành công.');

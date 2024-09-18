@@ -40,8 +40,8 @@ class DashBoardController extends Controller
         return view('admin.email');
     }
 
-    public function settings()
+    public function cooperate()
     {
-        return view('admin.settings');
+        return view('admin.cooperate');
     }
 }

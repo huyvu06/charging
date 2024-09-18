@@ -85,7 +85,7 @@
                     <a class="nav-link" href="{{ route('admin.approval') }}"><i class="fas fa-check nav-icon"></i> Phê duyệt</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="{{ route('admin.email') }}"><i class="fas fa-envelope nav-icon"></i> Email</a>
+                    <a class="nav-link" href="{{ route('admin.cooperate') }}"><i class="fas fa-envelope nav-icon"></i> Đối Tác</a>
                 </li>
             </ul>
             <ul class="navbar-nav ml-auto">
