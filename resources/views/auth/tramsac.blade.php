@@ -145,6 +145,20 @@
             <label for="image">Hình ảnh(*):</label>
             <input type="file" id="image" name="image" required accept="image/*">
         </div>
+       <div class="form-group">
+    <label>Chọn Xe(*):</label>
+    @if($cars->isEmpty())
+        <p>Chưa có xe nào trong hệ thống.</p>
+    @else
+        @foreach($cars as $car)
+            <div>
+                <input type="checkbox" id="car_{{ $car->id_car }}" name="car_ids[]" value="{{ $car->id_car }}">
+                <label for="car_{{ $car->id_car }}">{{ $car->name_car }}</label>
+            </div>
+        @endforeach
+    @endif
+</div>
+        
         <div class="form-group">
             <label for="loai_tram">Loại Cổng Sạc(*):</label>
             <select id="loai_tram" name="loai_tram" required>
@@ -184,10 +198,8 @@
             if (navigator.geolocation) {
                 navigator.geolocation.getCurrentPosition(
                     function (position) {
-                        const lat = position.coords.latitude.toFixed(6); // Giới hạn 6 chữ số thập phân
-                        const lon = position.coords.longitude.toFixed(6); // Giới hạn 6 chữ số thập phân
-
-                        // Cập nhật giá trị cho ô kinh độ và vĩ độ
+                        const lat = position.coords.latitude.toFixed(6); 
+                        const lon = position.coords.longitude.toFixed(6); 
                         mapInput.value = lat + ', ' + lon;
                     },
                     function (error) {
@@ -206,7 +218,6 @@
                                 message = 'Lỗi không xác định.';
                                 break;
                         }
-                        // Hiển thị thông báo lỗi
                         mapInput.value = '';
                         if (!document.querySelector('#error-message')) {
                             errorContainer.id = 'error-message';
@@ -217,13 +228,12 @@
                         }
                     },
                     {
-                        enableHighAccuracy: true, // Yêu cầu chính xác cao hơn
-                        timeout: 15000, // Thời gian chờ 15 giây
-                        maximumAge: 0 // Không sử dụng thông tin đã lưu
+                        enableHighAccuracy: true,
+                        timeout: 15000, 
+                        maximumAge: 0 
                     }
                 );
             } else {
-                // Trình duyệt không hỗ trợ geolocation
                 mapInput.value = '';
                 if (!document.querySelector('#error-message')) {
                     errorContainer.id = 'error-message';

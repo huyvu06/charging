@@ -23,7 +23,7 @@ use App\Http\Controllers\Admin\AdminController;
 
 // Group routes for other pages but without 'auth' prefix in the URL
 Route::get('/', [HomeController::class, 'Home'])->name('home');
-Route::get('/tramsac', [HomeController::class, 'tramsac'])->name('tramsac');
+Route::get('/station', [HomeController::class, 'tramsac'])->name('tramsac');
 Route::get('/login', [UserController::class, 'login'])->name('login');
 Route::post('/login', [UserController::class, 'postLogin']);
 
@@ -53,6 +53,9 @@ Route::view('/user_manual', 'auth.user_manual')->name('user_manual');
 // Route::get('/tramsac', [TramSacController::class, 'index'])->name('index');
 Route::get('/confirm-station/{token}', [TramSacController::class, 'confirm'])->name('tramsac.confirm');
 Route::post('/tramsac/store', [TramSacController::class, 'store'])->name('tramsac.store');
+// Route::get('/tramsac', [TramSacController::class, 'showCar'])->name('tramsac.create');
+
+
 // Route để hiển thị danh sách trạm sạc của người dùng
 Route::get('/manage-stations', [TramSacController::class, 'index'])->name('tramsac.index');
 // Route::get('/station/{id}/edit', [TramSacController::class, 'edit'])->name('station.edit');

@@ -32,16 +32,21 @@
   <!-- Khung bản đồ -->
   <div id="map"></div>
 
-  <!-- Khung tìm kiếm -->
   <div class="search-container">
+    <select id="car-type-select" class="search-input">
+        <option value="all">Tất cả</option>
+        @foreach($carTypes as $carType)
+            <option value="{{ $carType }}">{{ $carType }}</option>
+        @endforeach
+    </select>
     <input type="text" id="search" class="search-input" placeholder="Tìm trạm sạc theo tên hoặc tọa độ (lat, lon)...">
-  </div>
+</div>
 
   <script>
-    // Khởi tạo bản đồ
+   
     var map = L.map('map').setView([21.0285, 105.8467], 12);
 
-    // Thêm lớp tile OpenStreetMap vào bản đồ
+   
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
       maxZoom: 18,
       attribution: '© OpenStreetMap contributors'
@@ -52,7 +57,7 @@
     var stations = @json($stations);
     var currentRoutingControl;
 
-    // Hàm cập nhật bản đồ với vị trí hiện tại của người dùng
+   
     function updateMapWithCurrentLocation(lat, lon) {
       var currentLocation = [lat, lon];
       if (userLocationMarker) {
@@ -65,13 +70,13 @@
       return currentLocation;
     }
 
-    // Xử lý lỗi lấy vị trí
+   
     function handleGeolocationError(error) {
       console.error('Error getting location:', error);
       alert('Không thể lấy vị trí hiện tại.');
     }
 
-    // Hàm chia sẻ vị trí của trạm
+    
     function shareStationLocation(lat, lon) {
       var shareUrl = `${window.location.origin}/map?lat=${lat}&lon=${lon}`;
       navigator.clipboard.writeText(shareUrl).then(() => {
@@ -82,19 +87,19 @@
       });
     }
 
-    // Hàm chỉ đường đến vị trí đã chọn
+  
     function getRouteToLocation(lat, lon) {
       if (!userLocationMarker) {
         alert('Không thể lấy vị trí hiện tại.');
         return;
       }
 
-      // Xóa control chỉ đường trước đó nếu tồn tại
+      
       if (currentRoutingControl) {
         map.removeControl(currentRoutingControl);
       }
 
-      // Thêm control chỉ đường mới
+    
       currentRoutingControl = L.Routing.control({
         waypoints: [
           L.latLng(userLocationMarker.getLatLng().lat, userLocationMarker.getLatLng().lng),
@@ -106,22 +111,19 @@
       }).addTo(map);
     }
 
-    // Hàm xử lý tham số URL và căn giữa bản đồ
+    
     function handleUrlParams() {
       const urlParams = new URLSearchParams(window.location.search);
       const lat = parseFloat(urlParams.get('lat'));
       const lon = parseFloat(urlParams.get('lon'));
 
       if (!isNaN(lat) && !isNaN(lon)) {
-        // Cập nhật bản đồ đến tọa độ từ URL
         map.setView([lat, lon], 15);
-
-        // Tạo marker cho trạm sạc từ URL
         var marker = L.marker([lat, lon]).addTo(map)
           .bindPopup('Vị trí từ liên kết chia sẻ')
           .openPopup();
         
-        // Tìm trạm sạc gần nhất để cập nhật thông tin
+       
         var nearestStation = findNearestStation(lat, lon);
         if (nearestStation) {
           marker.setPopupContent('<div class="popup-content">' +
@@ -135,7 +137,6 @@
             '</div>').openPopup();
         }
       } else {
-        // Nếu không có tọa độ trong URL, lấy vị trí hiện tại của người dùng
         if (navigator.geolocation) {
           navigator.geolocation.getCurrentPosition(function(position) {
             updateMapWithCurrentLocation(position.coords.latitude, position.coords.longitude);
@@ -146,31 +147,28 @@
       }
     }
 
-    // Gọi hàm xử lý tham số URL khi trang được tải
+   
     handleUrlParams();
-
-    // Thêm các marker trạm vào bản đồ
     stations.forEach(function(station) {
       if (station.map_lat && station.map_lon) {
         var marker = L.marker([station.map_lat, station.map_lon]).addTo(map)
-          .bindPopup('<div class="popup-content">' +
-            '<h4>' + station.name_tramsac + '</h4>' +
-            '<p>' + station.address + '</p>' +
-            '<p>Loại trạm: ' + station.loai_tram + '</p>' +
-            '<p>Loại sạc: ' + station.loai_sac + '</p>' +
-            (station.image ? '<img src="data:image;base64,' + station.image + '" alt="image">' : '') +
-            '<button onclick="getRouteToLocation(' + station.map_lat + ', ' + station.map_lon + ')">Chỉ đường</button>' +
-            '<button onclick="shareStationLocation(' + station.map_lat + ', ' + station.map_lon + ')">Chia sẻ vị trí</button>' +
-            '</div>');
+            .bindPopup('<div class="popup-content">' +
+              '<h4>' + station.name_tramsac + '</h4>' +
+              '<p>' + station.address + '</p>' +
+              '<p>Loại trạm: ' + station.loai_tram + '</p>' +
+              '<p>Loại sạc: ' + station.loai_sac + '</p>' +
+              '<p>Loại xe: ' + (station.cars.map(car => car.name_car).join(', ') || 'Không có thông tin') + '</p>' + // Bao gồm loại xe
+              (station.image ? '<img src="data:image;base64,' + station.image + '" alt="image">' : '') +
+              '<button onclick="getRouteToLocation(' + station.map_lat + ', ' + station.map_lon + ')">Chỉ đường</button>' +
+              '<button onclick="shareStationLocation(' + station.map_lat + ', ' + station.map_lon + ')">Chia sẻ vị trí</button>' +
+              '</div>');
 
-        // Lưu marker vào từ điển với tên trạm là khóa
         markers[station.name_tramsac.toLowerCase()] = marker;
       } else {
         console.warn('Station missing coordinates:', station);
       }
     });
 
-    // Hàm tìm trạm sạc gần nhất từ tọa độ nhập vào
     function findNearestStation(lat, lon) {
       var nearestStation = null;
       var minDistance = Infinity;
@@ -188,12 +186,11 @@
       return nearestStation;
     }
 
-    // Chức năng tìm kiếm
+
     document.getElementById('search').addEventListener('input', function(event) {
       var searchQuery = event.target.value.toLowerCase();
       var foundMarker = false;
 
-      // Kiểm tra nếu tìm kiếm là tọa độ
       var coordsMatch = searchQuery.match(/^(-?\d+(\.\d+)?),\s*(-?\d+(\.\d+)?)$/);
       if (coordsMatch) {
         var lat = parseFloat(coordsMatch[1]);
@@ -207,7 +204,7 @@
           }
         }
       } else {
-        // Tìm kiếm theo tên trạm sạc
+       
         Object.keys(markers).forEach(function(name) {
           if (name.includes(searchQuery)) {
             var marker = markers[name];
@@ -222,6 +219,25 @@
         alert('Không tìm thấy trạm sạc nào.');
       }
     });
+
+   
+document.getElementById('car-type-select').addEventListener('change', function(event) {
+  var selectedCarType = event.target.value;
+  if (selectedCarType === 'all') {
+    Object.values(markers).forEach(function(marker) {
+      marker.addTo(map);
+    });
+  } else {
+    Object.values(markers).forEach(function(marker) {
+      if (marker.getPopup().getContent().includes(selectedCarType)) {
+        marker.addTo(map);
+      } else {
+        map.removeLayer(marker);
+      }
+    });
+  }
+});
+
   </script>
 
 @endsection

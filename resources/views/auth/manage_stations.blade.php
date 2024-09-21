@@ -31,6 +31,7 @@
                     <th>Hình Ảnh</th>
                     <th>Loại Cổng Sạc</th>
                     <th>Mã Cổng Sạc</th>
+                    <th>Loại Xe Hỗ Trợ</th> <!-- Thêm cột cho loại xe hỗ trợ -->
                     <th>Trạng Thái</th>
                 </tr>
             </thead>
@@ -50,6 +51,13 @@
                     </td>
                     <td>{{ $station->loai_tram }}</td>
                     <td>{{ $station->loai_sac }}</td>
+                    <td>
+                        <ul>
+                            @foreach($station->cars as $car) 
+                                <li>{{ $car->name_car }}</li>
+                            @endforeach
+                        </ul>
+                    </td>
                     <td>{{ $station->status == 1 ? 'Đã xác nhận' : 'Chưa xác nhận' }}</td>
                 </tr>
                 @endforeach

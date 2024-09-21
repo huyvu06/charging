@@ -3,13 +3,19 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Model;
 
 class car extends Model
 {
     use HasFactory;
-    protected $primarykey = 'id_car';
+    
     protected $table = 'car';
-    protected $fillable = ['id_car','name_car','cong_sac','id_tramsac'];
-
+    protected $primaryKey = 'id_car';
+    protected $fillable = ['id_car','name_car','dong_dien','cong_sac'];
+    
+    public function tramSacs()
+    {
+        return $this->belongsToMany(TramSac::class, 'tram_sac_car', 'car_id', 'tram_sac_id');
+    }
 }

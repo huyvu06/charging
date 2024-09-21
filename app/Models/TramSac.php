@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany; 
 
 class TramSac extends Model
 {
@@ -23,8 +24,6 @@ class TramSac extends Model
         'map_lat',            
         'map_lon',            
         'address',
-        'loai_tram',
-        'loai_sac',
         'user_id',
         'id_doitac',
         'confirmation_token',
@@ -43,5 +42,8 @@ class TramSac extends Model
         return $this->belongsTo(User::class, 'user_id', 'id');
     }
 
-   
+    public function cars(): BelongsToMany
+    {
+        return $this->belongsToMany(Car::class, 'tram_sac_car', 'tram_sac_id', 'car_id');
+    }
 }

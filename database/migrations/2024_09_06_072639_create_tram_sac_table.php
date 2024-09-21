@@ -16,9 +16,7 @@ return new class extends Migration
             $table->string('phone')->nullable(); 
             $table->string('name');
             $table->longText('image');
-            $table->string('loai_tram');
-            $table->string('loai_sac');
-            $table->string('email')->unique(); 
+            $table->string('email'); 
             $table->string('name_tramsac'); 
             $table->text('content'); 
             $table->decimal('map_lat', 10, 7)->nullable(); 
@@ -26,12 +24,12 @@ return new class extends Migration
             $table->string('address'); 
             $table->string('confirmation_token', 40)->nullable(); 
             $table->timestamp('email_verified_at')->nullable();
-            $table->unsignedBigInteger('user_id'); // Không dùng id() ở đây
+            $table->unsignedBigInteger('user_id'); 
             $table->unsignedBigInteger('id_doitac')->nullable();
             $table->boolean('status')->default(0); 
             $table->timestamps(); 
 
-            // Khóa ngoại
+            
             $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
             $table->foreign('id_doitac')->references('id_doitac')->on('network_system')->onDelete('set null');
         });
