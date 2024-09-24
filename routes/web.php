@@ -51,6 +51,7 @@ Route::view('/user_manual', 'auth.user_manual')->name('user_manual');
 
 // trạm sạc
 // Route::get('/tramsac', [TramSacController::class, 'index'])->name('index');
+Route::post('/confirm-station', [TramSacController::class, 'confirmAjax'])->name('tramsac.confirm');
 Route::get('/confirm-station/{token}', [TramSacController::class, 'confirm'])->name('tramsac.confirm');
 Route::post('/tramsac/store', [TramSacController::class, 'store'])->name('tramsac.store');
 // Route::get('/tramsac', [TramSacController::class, 'showCar'])->name('tramsac.create');

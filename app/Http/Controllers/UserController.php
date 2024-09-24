@@ -31,9 +31,9 @@ class UserController extends Controller
         $validatedData = $req->validate([
             'role' => 'required',
             'email' => 'required|email',
-            'password' => 'required|min:6',
+            'password' => 'required|min:6|confirmed',
             'name' => 'required|string|max:255',
-            'phone' => 'nullable|string|max:255',
+            'phone' => 'regex:/^0[0-9]{9,10}$/|numeric',
             'address' => 'nullable|string|max:255',
             'sex' => 'nullable|in:male,female',
         ]);
@@ -95,23 +95,29 @@ class UserController extends Controller
         $request->validate([
             'token' => 'required|string|digits:6',
         ]);
-
+    
+        // Lấy thông tin người dùng hiện tại
         $user = Auth::user();
-
-        \Log::info('User:', ['user' => $user]);
-        \Log::info('Token:', ['input_token' => $request->input('token')]);
-
+    
+        // Kiểm tra xem người dùng có đăng nhập hay không
         if (!$user) {
             return redirect()->route('login')->with('error', 'Bạn cần đăng nhập để xác thực.');
         }
-
+    
+        \Log::info('User:', ['user' => $user]);
+        \Log::info('Token:', ['input_token' => $request->input('token')]);
+    
+        // Kiểm tra mã xác thực
         if ($user->verification_token === $request->input('token')) {
-            $user->update(['verification_token' => null]);
+            // Nếu mã đúng
+            $user->update(['verification_token' => null]); // Xóa mã xác thực
             return redirect()->route('login')->with('success', 'Xác thực thành công. Bạn có thể đăng nhập.');
         } else {
-            return redirect()->back()->with('error', 'Mã xác thực không đúng.');
+            // Nếu mã không đúng
+            return redirect()->back()->with('error', 'Mã xác thực không đúng. Vui lòng thử lại.');
         }
     }
+    
 
 
 
@@ -126,21 +132,28 @@ class UserController extends Controller
     }
 
     public function postLogin(Request $req)
-    {
-        $credentials = $req->only('email', 'password');
+{
+    $credentials = $req->only('email', 'password');
+    $remember = $req->has('remember');
 
-
-        $remember = $req->has('remember');
-
-        if (Auth::attempt($credentials, $remember)) {
-
-            session(['user_name' => Auth::user()->name]);
-            \Log::info('User logged in:', ['user_id' => Auth::user()->id]);
-            return redirect()->route('home');
+    // Kiểm tra thông tin đăng nhập
+    if (Auth::attempt($credentials, $remember)) {
+        $user = Auth::user();
+        
+        // Kiểm tra nếu người dùng đã xác thực
+        if ($user->verification_token !== null) {
+            Auth::logout(); // Đăng xuất người dùng
+            return redirect()->back()->with('error', 'Bạn cần xác thực tài khoản trước khi đăng nhập.');
         }
 
-        return redirect()->back()->with('error', 'Thông tin đăng nhập không đúng.');
+        session(['user_name' => $user->userProfile->name]);
+        \Log::info('User logged in:', ['user_id' => $user->id]);
+        return redirect()->route('home');
     }
+
+    return redirect()->back()->with('error', 'Thông tin đăng nhập không đúng.');
+}
+
 
     public function showProfile()
     {

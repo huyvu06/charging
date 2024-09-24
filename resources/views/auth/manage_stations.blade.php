@@ -7,6 +7,23 @@
         object-fit: cover;
         border-radius: 5px; 
     }
+    .container {
+        max-width: 1200px; 
+        margin: 0 auto; 
+    }
+    .table {
+        width: 100%; 
+        border-collapse: collapse; 
+        margin-top: 20px; 
+    }
+    .table th, .table td {
+        padding: 15px; 
+        border: 1px solid #ddd; 
+        text-align: left; 
+    }
+    .table th {
+        background-color: #f2f2f2; 
+    }
 </style>
 
 @section('content')
@@ -29,9 +46,9 @@
                     <th>Điện Thoại</th>
                     <th>Email</th>
                     <th>Hình Ảnh</th>
-                    <th>Loại Cổng Sạc</th>
-                    <th>Mã Cổng Sạc</th>
-                    <th>Loại Xe Hỗ Trợ</th> <!-- Thêm cột cho loại xe hỗ trợ -->
+                    <th>Dòng Điện</th>
+                    <th>Cổng Sạc</th>
+                    <th>Loại Xe Hỗ Trợ</th> 
                     <th>Trạng Thái</th>
                 </tr>
             </thead>
@@ -49,8 +66,12 @@
                             Không có hình ảnh
                         @endif
                     </td>
-                    <td>{{ $station->loai_tram }}</td>
-                    <td>{{ $station->loai_sac }}</td>
+                    <td>
+                        {{ implode(', ', array_unique($station->cars->pluck('dong_dien')->toArray())) }}
+                    </td>
+                    <td>
+                        {{ implode(', ', array_unique($station->cars->pluck('cong_sac')->toArray())) }}
+                    </td>
                     <td>
                         <ul>
                             @foreach($station->cars as $car) 

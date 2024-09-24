@@ -136,6 +136,9 @@
         <div class="form-group">
             <label for="phone">Số Điện Thoại(*):</label>
             <input type="tel" id="phone" name="phone" required value="{{ old('phone') }}">
+            @error('phone')
+            <div class="text-danger">{{ $message }}</div>
+            @enderror
         </div>
         <div class="form-group">
             <label for="name_tramsac">Tên Trạm Sạc(*):</label>
@@ -159,17 +162,6 @@
     @endif
 </div>
         
-        <div class="form-group">
-            <label for="loai_tram">Loại Cổng Sạc(*):</label>
-            <select id="loai_tram" name="loai_tram" required>
-                <option value="AC" {{ old('loai_tram') == 'AC' ? 'selected' : '' }}>AC</option>
-                <option value="DC" {{ old('loai_tram') == 'DC' ? 'selected' : '' }}>DC</option>
-            </select>
-        </div>
-        <div class="form-group">
-            <label for="loai_sac">Mã Cổng Sạc(*):</label>
-            <input type="text" id="loai_sac" name="loai_sac" required value="{{ old('loai_sac') }}">
-        </div>
         <div class="form-group">
             <label for="content">Nội Dung:</label>
             <input type="text" id="content" name="content" value="{{ old('content') }}">

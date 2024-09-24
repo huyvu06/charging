@@ -46,12 +46,10 @@ class TramSacController extends Controller
        
         $request->validate([
             'name' => 'required|string|max:255',
-            'phone' => 'required|string',
+            'phone' => 'regex:/^0[0-9]{9,10}$/|numeric',
             'name_tramsac' => 'required|string|max:255',
             'image' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048',
             'address' => 'required|string',
-            'loai_tram' => 'required|string',
-            'loai_sac' => 'required|string',
             'map' => 'required|string',
             'car_ids' => 'required|array', 
             'car_ids.*' => 'exists:car,id_car', 
@@ -77,8 +75,6 @@ class TramSacController extends Controller
                 'map_lat' => $lat,
                 'map_lon' => $lon,
                 'address' => $request->input('address'),
-                'loai_tram' => $request->input('loai_tram'),
-                'loai_sac' => $request->input('loai_sac'),
                 'user_id' => $user->id,
                 'id_doitac' => null,
                 'confirmation_token' => Str::random(40),
@@ -98,28 +94,27 @@ class TramSacController extends Controller
 
 
 
-public function confirm($token)
-{
+    public function confirm($token)
+    {
+        $station = TramSac::where('confirmation_token', $token)->first();
     
-    $station = TramSac::where('confirmation_token', $token)->first();
-   
-    if (!$station) {
-        return redirect()->route('home')->with('error', 'Token xác nhận không hợp lệ.');
+        if ($station->status === 1) {
+            return response()->json(['info' => 'Trạm sạc đã được xác nhận trước đó.'], 200);
+        }
+    
+        $station->status = 1;
+        $station->confirmation_token = null;
+        $station->save();
+    
+        return response()->json(['success' => 'Trạm sạc "' . $station->name . '" đã được xác nhận thành công.']);
     }
-   
-    if ($station->status === 1) {
-        return redirect()->route('home')->with('info', 'Trạm sạc đã được xác nhận trước đó.');
-    }
-   
-    $station->status = 1;
-    $station->confirmation_token = null;
-    $station->save();
-   
-    return redirect()->route('tramsac.index')->with('success', 'Trạm sạc "' . $station->name . '" đã được xác nhận thành công.');
-}
+    
+
+
 
 public function map()
 {
+    
     $stations = TramSac::with('cars')->get();
     $carTypes = $stations->flatMap(function($station) {
         return $station->cars->pluck('name_car');

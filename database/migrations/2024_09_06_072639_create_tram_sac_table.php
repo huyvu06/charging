@@ -22,7 +22,7 @@ return new class extends Migration
             $table->decimal('map_lat', 10, 7)->nullable(); 
             $table->decimal('map_lon', 10, 7)->nullable(); 
             $table->string('address'); 
-            $table->string('confirmation_token', 40)->nullable(); 
+            $table->string('confirmation_token', 40)->nullable();; 
             $table->timestamp('email_verified_at')->nullable();
             $table->unsignedBigInteger('user_id'); 
             $table->unsignedBigInteger('id_doitac')->nullable();

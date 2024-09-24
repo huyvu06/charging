@@ -192,12 +192,19 @@
     <div class="container">
         <div class="form-container">
             <h1>Đăng ký</h1>
-            <form method="POST" action="" onsubmit="return validateForm()">
+            <form method="POST" action="{{ route('sign') }}" onsubmit="return validateForm()">
                 @csrf
+
+                <!-- Trường Tên -->
                 <div class="form-group">
                     <i class="fas fa-user"></i>
                     <input type="text" placeholder="Tên của bạn" name="name" value="{{ old('name') }}" required>
+                    @error('name')
+                        <div class="text-danger">{{ $message }}</div>
+                    @enderror
                 </div>
+
+                <!-- Trường Email -->
                 <div class="form-group">
                     <i class="fas fa-envelope"></i>
                     <input type="email" placeholder="Email của bạn" name="email" value="{{ old('email') }}" required>
@@ -205,49 +212,69 @@
                         <div class="text-danger">{{ $message }}</div>
                     @enderror
                 </div>
+
+                <!-- Trường Số Điện Thoại -->
                 <div class="form-group">
                     <i class="fas fa-phone"></i>
-                    <input type="text" placeholder="Số điện thoại của bạn" name="phone" value="{{ old('phone') }}"
-                        required>
+                    <input type="text" placeholder="Số điện thoại của bạn" name="phone" value="{{ old('phone') }}">
                     @error('phone')
                         <div class="text-danger">{{ $message }}</div>
                     @enderror
                 </div>
+
+                <!-- Trường Quyền -->
                 <div class="form-group">
                     <label for="role">Chọn quyền : </label>
                     <select name="role" id="role" required>
                         <option value="0" {{ old('role') == '0' ? 'selected' : '' }}>User</option>
                         <option value="2" {{ old('role') == '2' ? 'selected' : '' }}>Khách hàng</option>
                     </select>
+                    @error('role')
+                        <div class="text-danger">{{ $message }}</div>
+                    @enderror
                 </div>
+
+                <!-- Trường Giới Tính -->
                 <div class="form-group">
                     <label for="sex">Giới tính: </label>
                     <select name="sex" id="sex" required>
                         <option value="male" {{ old('sex') == 'male' ? 'selected' : '' }}>Nam</option>
                         <option value="female" {{ old('sex') == 'female' ? 'selected' : '' }}>Nữ</option>
                     </select>
+                    @error('sex')
+                        <div class="text-danger">{{ $message }}</div>
+                    @enderror
                 </div>
 
                 <div class="form-group">
                     <i class="fas fa-lock"></i>
                     <input type="password" id="password" placeholder="Mật khẩu" name="password" required>
                     <i class="fas fa-eye toggle-password" onclick="togglePassword()"></i>
+                    @error('password')
+                        <div class="text-danger">{{ $message }}</div>
+                    @enderror
                 </div>
+                
                 <div class="form-group">
                     <i class="fas fa-lock"></i>
-                    <input type="password" id="repeat-password" placeholder="Nhập lại mật khẩu" required>
+                    <input type="password" id="repeat-password" placeholder="Nhập lại mật khẩu" name="password_confirmation" required>
                     <i class="fas fa-eye toggle-password" onclick="togglePassword('repeat-password')"></i>
                 </div>
+                <!-- Điều khoản dịch vụ -->
                 <div class="checkbox-group">
                     <input type="checkbox" id="terms" required>
-                    <label for="terms" style="margin-top:6px">Tôi đồng ý với tất cả các điều khoản trong <a
-                            href="#">Điều khoản dịch vụ</a></label>
+                    <label for="terms" style="margin-top:6px">Tôi đồng ý với tất cả các điều khoản trong 
+                        <a href="#">Điều khoản dịch vụ</a>
+                    </label>
                 </div>
+
+                <!-- Nút gửi -->
                 <button type="submit">Đăng ký</button>
             </form>
         </div>
+
         <div class="image-container">
-            <img src="{{ asset('images/register.jpg') }}" alt="Sign up image">
+            <img src="{{ asset('images/register.jpg') }}" alt="Hình ảnh đăng ký">
             <div class="login-link">
                 <a href="{{ route('login') }}">Tôi đã có tài khoản</a>
             </div>
