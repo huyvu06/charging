@@ -226,8 +226,8 @@
                 <div class="form-group">
                     <label for="role">Chọn quyền : </label>
                     <select name="role" id="role" required>
-                        <option value="0" {{ old('role') == '0' ? 'selected' : '' }}>User</option>
-                        <option value="2" {{ old('role') == '2' ? 'selected' : '' }}>Khách hàng</option>
+                        <option value="0" {{ old('role') == '0' ? 'selected' : '' }}>Khách hàng</option>
+                        <option value="2" {{ old('role') == '2' ? 'selected' : '' }}>Chủ Trạm</option>
                     </select>
                     @error('role')
                         <div class="text-danger">{{ $message }}</div>

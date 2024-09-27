@@ -123,7 +123,7 @@
         <p><strong>Dòng điện:</strong> ${uniqueElectricity}</p>
         <p><strong>Cổng sạc:</strong> ${uniquePorts}</p>
         ${station.image ? '<img src="data:image;base64,' + station.image + '" alt="image">' : ''}
-        <button onclick="getRouteToLocation(${station.map_lat}, ${station.map_lon})">Chỉ đường</button>
+        <button  onclick="getRouteToLocation(${station.map_lat}, ${station.map_lon})">Chỉ đường</button>
         <button onclick="shareStationLocation(${station.map_lat}, ${station.map_lon})">Chia sẻ vị trí</button>
       `;
       stationDetails.style.display = 'block'; 
@@ -244,14 +244,14 @@
     var marker = markers[stationName];
     var station = stations.find(station => station.name_tramsac.toLowerCase() === stationName.toLowerCase());
     
-    // Kiểm tra xem trạm có xe tương ứng hay không
+  
     var hasSelectedCarType = station && (selectedCarType === 'all' || station.cars.some(car => car.name_car === selectedCarType));
     
     if (hasSelectedCarType) {
-      marker.addTo(map); // Đảm bảo marker được thêm vào bản đồ
-      marker.setOpacity(1); // Hiển thị marker
+      marker.addTo(map); 
+      marker.setOpacity(1); 
     } else {
-      marker.remove(); // Xóa marker nếu không phù hợp
+      marker.remove();
     }
   }
 }
