@@ -156,7 +156,7 @@
         @foreach($cars as $car)
             <div>
                 <input type="checkbox" id="car_{{ $car->id_car }}" name="car_ids[]" value="{{ $car->id_car }}">
-                <label for="car_{{ $car->id_car }}">{{ $car->name_car }}</label>
+                <label for="car_{{ $car->id_car }}">{{ $car->cong_sac }}</label>
             </div>
         @endforeach
     @endif

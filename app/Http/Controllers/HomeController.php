@@ -18,7 +18,7 @@ class HomeController extends Controller
         return view('auth.news');
     }
     public function tramsac(){
-        $cars = Car::all(); 
+        $cars = Car::all()->unique('cong_sac'); 
         \Log::info('Cars:', $cars->toArray());
         return view('auth.tramsac', compact('cars'));
     }

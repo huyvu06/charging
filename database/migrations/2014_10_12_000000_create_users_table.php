@@ -17,7 +17,7 @@ return new class extends Migration
             $table->tinyInteger('role')->default(0);
             $table->unsignedBigInteger('id_tramsac')->nullable();
             $table->timestamp('email_verified_at')->nullable();
-            $table->string('verification_token')->nullable();
+            $table->string('verification_token')->nullable()->default(null);
             $table->string('password');
             $table->rememberToken();
             $table->timestamps();

@@ -88,17 +88,23 @@
             <div class="card-header">Xác thực Email</div>
             <p class="alert">Vui lòng kiểm tra email để nhận mã xác thực !</p>
             <div class="card-body">
-                <form action="{{ route('verify') }}" method="POST">
+                <form method="POST" action="">
                     @csrf
-                    <div class="form-group">
+                    <div>
                         <label for="token">Nhập mã xác thực:</label>
-                        <input type="text" id="token" name="token" class="form-control" required>
+                        <input type="text" id="token" name="token" value="{{ old('token') }}" required>
                         @error('token')
-                            <div class="text-danger">{{ $message }}</div>
+                            <div class="error">{{ $message }}</div>
                         @enderror
                     </div>
-                    <button type="submit" class="btn btn-primary">Xác thực</button>
+                
+                    @if(session('error'))
+                        <div class="error">{{ session('error') }}</div>
+                    @endif
+                
+                    <button type="submit">Xác thực</button>
                 </form>
+                
             </div>
         </div>
     </div>

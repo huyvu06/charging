@@ -17,24 +17,32 @@ use App\Mail\RegisterStationConfirmationMail;
 class TramSacController extends Controller
 {
     public function index()
-    {
-        $user = Auth::user();
-        if (!$user) {
-            \Log::error('User not logged in');
-            return redirect()->route('login')->with('error', 'Bạn cần phải đăng nhập để xem trạm sạc.');
-        }
-    
-        \Log::info('Current User ID:', ['user_id' => $user->id]);
-    
-        $stations = TramSac::with('cars')
-            ->where('user_id', $user->id)
-            ->where('status', 1)
-            ->get();
-    
-        \Log::info('Stations:', $stations->toArray());
-    
-        return view('auth.manage_stations', compact('stations'));
+{
+    $user = Auth::user();
+    if (!$user) {
+        \Log::error('User not logged in');
+        return redirect()->route('login')->with('error', 'Bạn cần phải đăng nhập để xem trạm sạc.');
     }
+
+    \Log::info('Current User ID:', ['user_id' => $user->id]);
+
+    // Lấy danh sách các trạm sạc của người dùng
+    $stations = TramSac::with('cars')
+        ->where('user_id', $user->id)
+        ->where('status', 1)
+        ->get();
+
+    \Log::info('Stations:', $stations->toArray());
+
+    // Nhóm các xe theo cổng sạc
+    $groupedCars = $stations->flatMap(function ($station) {
+        return $station->cars->groupBy('cong_sac');
+    });
+
+    return view('auth.manage_stations', compact('stations', 'groupedCars'));
+}
+
+    
     
    
     public function store(Request $request)

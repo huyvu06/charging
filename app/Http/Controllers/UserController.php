@@ -91,32 +91,26 @@ class UserController extends Controller
     }
 
     public function verifyToken(Request $request)
-    {
-        $request->validate([
-            'token' => 'required|string|digits:6',
-        ]);
-    
-        // Lấy thông tin người dùng hiện tại
-        $user = Auth::user();
-    
-        // Kiểm tra xem người dùng có đăng nhập hay không
-        if (!$user) {
-            return redirect()->route('login')->with('error', 'Bạn cần đăng nhập để xác thực.');
-        }
-    
-        \Log::info('User:', ['user' => $user]);
-        \Log::info('Token:', ['input_token' => $request->input('token')]);
-    
-        // Kiểm tra mã xác thực
-        if ($user->verification_token === $request->input('token')) {
-            // Nếu mã đúng
-            $user->update(['verification_token' => null]); // Xóa mã xác thực
-            return redirect()->route('login')->with('success', 'Xác thực thành công. Bạn có thể đăng nhập.');
-        } else {
-            // Nếu mã không đúng
-            return redirect()->back()->with('error', 'Mã xác thực không đúng. Vui lòng thử lại.');
-        }
+{
+    $request->validate([
+        'token' => 'required|string|digits:6',
+    ]);
+
+
+    $user = User::where('verification_token', $request->input('token'))->first();
+
+    \Log::info('User:', ['user' => $user]);
+    \Log::info('Token:', ['input_token' => $request->input('token')]);
+
+    if (!$user) {
+        return redirect()->route('verify')->with('error', 'Mã xác thực không đúng hoặc đã hết hạn. Vui lòng thử lại.');
     }
+
+    $user->update(['verification_token' => null]);
+
+    return redirect()->route('login')->with('success', 'Xác thực thành công. Bạn có thể đăng nhập.');
+}
+
     
 
 
@@ -136,13 +130,11 @@ class UserController extends Controller
     $credentials = $req->only('email', 'password');
     $remember = $req->has('remember');
 
-    // Kiểm tra thông tin đăng nhập
+
     if (Auth::attempt($credentials, $remember)) {
         $user = Auth::user();
-        
-        // Kiểm tra nếu người dùng đã xác thực
         if ($user->verification_token !== null) {
-            Auth::logout(); // Đăng xuất người dùng
+            Auth::logout(); 
             return redirect()->back()->with('error', 'Bạn cần xác thực tài khoản trước khi đăng nhập.');
         }
 
@@ -162,26 +154,22 @@ class UserController extends Controller
         return view('auth.profile', ['user' => $user]);
     }
 
-    // Update profile
     public function update(Request $request, $id)
     {
         $user = User::findOrFail($id);
  
-        // Cập nhật thông tin cơ bản
         $user->userProfile->update([
             'name' => $request->input('name'),
             'phone' => $request->input('phone'),
             'sex' => $request->input('sex'),
         ]);
  
-        // Kiểm tra và xử lý nếu có hình ảnh được upload
         if ($request->hasFile('image')) {
             $image = $request->file('image');
             $imagePath = $image->getRealPath();
             $imageData = file_get_contents($imagePath);
             $base64Image = base64_encode($imageData);
  
-            // Lưu hình ảnh dưới dạng base64
             $user->userProfile->update([
                 'image' => $base64Image,
             ]);

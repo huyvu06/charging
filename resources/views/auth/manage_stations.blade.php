@@ -1,5 +1,6 @@
 @extends('nav.header')
 @section('title', 'Quản lý Trạm Sạc')
+
 <style>
     img {
         width: 100px;
@@ -61,7 +62,7 @@
                     <td>{{ $station->email }}</td>
                     <td>
                         @if($station->image)
-                           <img src="data:image;base64,{{ $station->image }}" alt="image">
+                            <img src="data:image;base64,{{ $station->image }}" alt="image">
                         @else
                             Không có hình ảnh
                         @endif
@@ -74,8 +75,17 @@
                     </td>
                     <td>
                         <ul>
-                            @foreach($station->cars as $car) 
-                                <li>{{ $car->name_car }}</li>
+                            <!-- Nhóm xe theo cổng sạc -->
+                            @foreach($station->cars->groupBy('cong_sac') as $cong_sac => $cars)
+                                
+                                  
+                                    <ul>
+                                        <!-- Hiển thị tất cả các loại xe tương ứng với cổng sạc -->
+                                        @foreach($cars as $car)
+                                            <li>{{ $car->name_car }}</li>
+                                        @endforeach
+                                    </ul>
+                               
                             @endforeach
                         </ul>
                     </td>
@@ -83,6 +93,7 @@
                 </tr>
                 @endforeach
             </tbody>
+            
         </table>
     @endif
 </div>

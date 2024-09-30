@@ -207,12 +207,18 @@
     </div>
     <div class="form-container">
         <h1>Login</h1>
-        @if ($message = Session::get('error'))
-            <div class="alert alert-danger alert-block">
-                <button type="button" class="close" data-dismiss="alert">×</button>	
-                <strong>{{ $message }}</strong>
-            </div>
-        @endif
+        @if(session('error'))
+        <div class="alert alert-danger">
+            {{ session('error') }}
+        </div>
+    @endif
+    
+    @if(session('success'))
+        <div class="alert alert-success">
+            {{ session('success') }}
+        </div>
+    @endif
+    
         <form action="" method="POST">
             @csrf
             <div class="form-group">
@@ -231,7 +237,7 @@
             <button type="submit">Log in</button>
         </form>
         <div class="create-account">
-            <a href="#">Create an account</a>
+            <a href="{{route('sign')}}">Create an account</a>
         </div>
         <div class="social-login">
             <span>Or login with</span>
