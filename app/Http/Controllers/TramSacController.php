@@ -28,14 +28,14 @@ class TramSacController extends Controller
     \Log::info('Current User ID:', ['user_id' => $user->id]);
 
     // Lấy danh sách các trạm sạc của người dùng
-    $stations = TramSac::with('chargingPorts') // Change here to chargingPorts
+    $stations = TramSac::with('chargingPort') // Change here to chargingPorts
     ->where('user_id', $user->id)
     ->where('status', 1)
     ->get();
 
 // Nhóm các cổng sạc theo cổng sạc
         $groupedChargingPorts = $stations->flatMap(function ($station) {
-            return $station->chargingPorts->groupBy('cong_sac'); // Make sure 'cong_sac' exists in the ChargingPort model
+            return $station->chargingPort->groupBy('cong_sac'); // Make sure 'cong_sac' exists in the ChargingPort model
         });
 
         return view('auth.manage_stations', compact('stations', 'groupedChargingPorts'));
@@ -87,7 +87,7 @@ public function store(Request $request)
         ]);
 
         
-        $station->chargingPorts()->attach($request->input('charging_port_ids'));
+        $station->chargingPort()->attach($request->input('charging_port_ids'));
 
         $recipientEmail = 'vuvanhuy.tdc.3557@gmail.com'; 
         Mail::to($recipientEmail)->send(new RegisterStationConfirmationMail($station));
@@ -122,24 +122,24 @@ public function store(Request $request)
 
     public function map()
 {
-    // Eager load charging ports and cars associated with charging ports
-    $stations = TramSac::with(['chargingPorts', 'chargingPorts.cars'])->get(); 
+ 
+    $stations = TramSac::with(['chargingPort', 'chargingPort.cars'])->get(); 
 
-    // Extract unique car types from the cars associated with the charging ports
+   
     $carTypes = $stations->flatMap(function($station) {
-        return $station->chargingPorts->flatMap(function($chargingPort) {
+        return $station->chargingPort->flatMap(function($chargingPort) {
             return $chargingPort->cars->pluck('name'); 
         });
     })->unique()->values()->toArray(); 
 
-    // Extract unique charging port names
+   
     $chargingPorts = $stations->flatMap(function($station) {
-        return $station->chargingPorts->pluck('cong_sac'); // Assuming 'cong_sac' is the name of the port
+        return $station->chargingPort->pluck('cong_sac'); 
     })->unique()->values()->toArray(); 
 
     \Log::info('Stations:', $stations->toArray());
     \Log::info('Car Types:', $carTypes);
-    \Log::info('Charging Ports:', $chargingPorts); // Log charging ports for debugging
+    \Log::info('Charging Ports:', $chargingPorts); 
 
     return view('auth.map', compact('stations', 'carTypes', 'chargingPorts'));
 }

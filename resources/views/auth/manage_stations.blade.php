@@ -103,10 +103,10 @@
                     @endif
                 </td>
                 <td>
-                    {{ implode(', ', array_unique($station->chargingPorts->pluck('cong_sac')->toArray())) }}
+                    {{ implode(', ', array_unique($station->chargingPort->pluck('cong_sac')->toArray())) }}
                 </td>
                 <td>
-                    @foreach($station->chargingPorts as $chargingPort)
+                    @foreach($station->chargingPort as $chargingPort)
                         <ul>
                             @foreach($chargingPort->cars as $car)
                                 <li>{{ $car->name }}</li>

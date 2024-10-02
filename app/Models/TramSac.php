@@ -1,46 +1,46 @@
-    <?php
+<?php
 
-    namespace App\Models;
+namespace App\Models;
 
-    use Illuminate\Database\Eloquent\Factories\HasFactory;
-    use Illuminate\Database\Eloquent\Model;
-    use Illuminate\Database\Eloquent\Relations\BelongsTo;
-    use Illuminate\Database\Eloquent\Relations\BelongsToMany; 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany; 
 
-    class TramSac extends Model
+class TramSac extends Model
+{
+    use HasFactory;
+
+    protected $table = 'tram_sac';
+    protected $primaryKey = 'id_tramsac';
+    
+    protected $fillable = [
+        'name',
+        'phone',
+        'email',
+        'name_tramsac',
+        'image',
+        'content',
+        'map_lat',            
+        'map_lon',            
+        'address',
+        'user_id',
+        'id_doitac',
+        'confirmation_token',
+        'status',
+    ];
+
+    public $timestamps = true;
+
+    /**
+     * Define a belongs-to relationship with the User model.
+     *
+     * @return BelongsTo
+     */
+    public function user(): BelongsTo
     {
-        use HasFactory;
-
-        protected $table = 'tram_sac';
-        protected $primaryKey = 'id_tramsac';
-        
-        protected $fillable = [
-            'name',
-            'phone',
-            'email',
-            'name_tramsac',
-            'image',
-            'content',
-            'map_lat',            
-            'map_lon',            
-            'address',
-            'user_id',
-            'id_doitac',
-            'confirmation_token',
-            'status',
-        ];
-
-        public $timestamps = true;
-
-        /**
-         * Define a belongs-to relationship with the User model.
-         *
-         * @return BelongsTo
-         */
-        public function user(): BelongsTo
-        {
-            return $this->belongsTo(User::class, 'user_id', 'id');
-        }
+        return $this->belongsTo(User::class, 'user_id', 'id');
+    }
 
     public function ChargingPort(): BelongsToMany
     {
