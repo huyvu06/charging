@@ -14,12 +14,12 @@ return new class extends Migration
         Schema::create('tram_sac_car', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('tram_sac_id');
-            $table->unsignedBigInteger('car_id');
+            $table->unsignedBigInteger('charging_port_id');
             $table->timestamps();
 
           
             $table->foreign('tram_sac_id')->references('id_tramsac')->on('tram_sac')->onDelete('cascade');
-            $table->foreign('car_id')->references('id_car')->on('car')->onDelete('cascade'); // Sửa từ 'car' thành 'cars'
+            $table->foreign('charging_port_id')->references('id_charging_port')->on('charging_port')->onDelete('cascade'); 
         });
     }
 
@@ -31,4 +31,3 @@ return new class extends Migration
         Schema::dropIfExists('tram_sac_car');
     }
 };
-

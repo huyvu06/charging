@@ -2,9 +2,9 @@
 
 namespace Database\Seeders;
 
-// use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
-use App\Models\Car; 
+use App\Models\car;
+use App\Models\ChargingPort;
 
 class DatabaseSeeder extends Seeder
 {
@@ -13,15 +13,41 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
+       
+        $ChargingPort = [
+            ['cong_sac' => 'CCS'],
+            ['cong_sac' => 'Type 2'],
+            // Thêm nhiều loại cổng sạc khác nếu cần
+        ];
+
+        // Insert data into the charging_ports table
+        foreach ($ChargingPort as $port) {
+            ChargingPort::create($port);
+        }
+        // Fetch all charging ports after they have been created
+        $ChargingPort = ChargingPort::all();
+
+        // Sample data for cars, associating them with charging ports
+        $car = [
+            // Xe sử dụng cổng sạc CCS
+            ['name' => 'Tesla Model 3', 'charging_port_id' => $ChargingPort->where('cong_sac', 'CCS')->first()->id_charging_port],
+            ['name' => 'Audi e-tron', 'charging_port_id' => $ChargingPort->where('cong_sac', 'CCS')->first()->id_charging_port],
+            ['name' => 'Hyundai Kona Electric', 'charging_port_id' => $ChargingPort->where('cong_sac', 'CCS')->first()->id_charging_port],
+            ['name' => 'Volkswagen ID.4', 'charging_port_id' => $ChargingPort->where('cong_sac', 'CCS')->first()->id_charging_port],
+            ['name' => 'Ford Mustang Mach-E', 'charging_port_id' => $ChargingPort->where('cong_sac', 'CCS')->first()->id_charging_port],
         
-        Car::insert([
-            ['name_car' => 'Tesla Model S', 'dong_dien' => 'DC', 'cong_sac' => 'Type 2'],
-            ['name_car' => 'Nissan Leaf', 'dong_dien' => 'DC', 'cong_sac' => 'CHAdeMO'],
-            ['name_car' => 'BMW i3', 'dong_dien' => 'AC', 'cong_sac' => 'Type 2'],
-            ['name_car' => 'Chevrolet Bolt', 'dong_dien' => 'DC', 'cong_sac' => 'CCS'],
-            ['name_car' => 'Hyundai Kona Electric', 'dong_dien' => 'DC', 'cong_sac' => 'CCS'],
-            ['name_car' => 'Audi e-tron', 'dong_dien' => 'AC', 'cong_sac' => 'Type 2'],
-        ]);
+            // Xe sử dụng cổng sạc Type 2
+            ['name' => 'BMW i3', 'charging_port_id' => $ChargingPort->where('cong_sac', 'Type 2')->first()->id_charging_port],
+            ['name' => 'Nissan Leaf', 'charging_port_id' => $ChargingPort->where('cong_sac', 'Type 2')->first()->id_charging_port],
+            ['name' => 'Kia e-Niro', 'charging_port_id' => $ChargingPort->where('cong_sac', 'Type 2')->first()->id_charging_port],
+            ['name' => 'Porsche Taycan', 'charging_port_id' => $ChargingPort->where('cong_sac', 'Type 2')->first()->id_charging_port],
+            ['name' => 'Mercedes-Benz EQC', 'charging_port_id' => $ChargingPort->where('cong_sac', 'Type 2')->first()->id_charging_port],
+        ];
+
+        // Insert data into the cars table
+        foreach ($car as $car) {
+            Car::create($car);
+        }
+        
     }
 }
-

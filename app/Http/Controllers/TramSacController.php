@@ -93,7 +93,7 @@ class TramSacController extends Controller
             $recipientEmail = 'vuvanhuy.tdc.3557@gmail.com'; 
             Mail::to($recipientEmail)->send(new RegisterStationConfirmationMail($station));
     
-            return redirect()->route('tramsac')->with('success', 'Đã gửi thông tin đăng ký trạm sạc thành công. Vui lòng kiểm tra email để xác nhận.');
+            return redirect()->route('tramsac.index')->with('success', 'Đã gửi thông tin đăng ký trạm sạc thành công. Vui lòng kiểm tra email để xác nhận.');
         } catch (\Exception $e) {
             return back()->with('error', 'Có lỗi xảy ra khi đăng ký trạm sạc: ' . $e->getMessage());
         }

@@ -42,8 +42,8 @@ class TramSac extends Model
         return $this->belongsTo(User::class, 'user_id', 'id');
     }
 
-    public function cars(): BelongsToMany
+    public function ChargingPort(): BelongsToMany
     {
-        return $this->belongsToMany(Car::class, 'tram_sac_car', 'tram_sac_id', 'car_id');
+        return $this->belongsToMany(ChargingPort::class, 'tram_sac_car', 'tram_sac_id', 'charging_port_id');
     }
 }

@@ -99,6 +99,42 @@
             padding: 10px;
             font-size: 15px;
         }
+
+        .container {
+            padding: 10px;
+        }
+
+        .form-group label {
+            font-size: 14px;
+        }
+
+        .form-container {
+            box-shadow: none;
+        }
+    }
+
+    /* Responsive cho tablet */
+    @media (min-width: 577px) and (max-width: 768px) {
+        .form-container {
+            padding: 25px;
+            max-width: 100%;
+        }
+
+        .form-container h1 {
+            font-size: 22px;
+            margin-bottom: 25px;
+        }
+
+        .form-group input,
+        .form-group textarea {
+            padding: 11px;
+            font-size: 15px;
+        }
+
+        button {
+            padding: 11px;
+            font-size: 16px;
+        }
     }
 </style>
 
@@ -148,19 +184,19 @@
             <label for="image">Hình ảnh(*):</label>
             <input type="file" id="image" name="image" required accept="image/*">
         </div>
-       <div class="form-group">
-    <label>Chọn Xe(*):</label>
-    @if($cars->isEmpty())
-        <p>Chưa có xe nào trong hệ thống.</p>
-    @else
-        @foreach($cars as $car)
-            <div>
-                <input type="checkbox" id="car_{{ $car->id_car }}" name="car_ids[]" value="{{ $car->id_car }}">
-                <label for="car_{{ $car->id_car }}">{{ $car->cong_sac }}</label>
-            </div>
-        @endforeach
-    @endif
-</div>
+        <div class="form-group">
+            <label>Chọn Xe(*):</label>
+            @if($cars->isEmpty())
+                <p>Chưa có xe nào trong hệ thống.</p>
+            @else
+                @foreach($cars as $car)
+                    <div>
+                        <input type="checkbox" id="car_{{ $car->id_car }}" name="car_ids[]" value="{{ $car->id_car }}">
+                        <label for="car_{{ $car->id_car }}">{{ $car->cong_sac }}</label>
+                    </div>
+                @endforeach
+            @endif
+        </div>
         
         <div class="form-group">
             <label for="content">Nội Dung:</label>

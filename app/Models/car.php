@@ -9,13 +9,14 @@ use Illuminate\Database\Eloquent\Model;
 class car extends Model
 {
     use HasFactory;
-    
-    protected $table = 'car';
-    protected $primaryKey = 'id_car';
-    protected $fillable = ['id_car','name_car','dong_dien','cong_sac'];
-    
-    public function tramSacs()
+
+    protected $table = 'car'; 
+    protected $primaryKey = 'id'; 
+    protected $fillable = ['id', 'name', 'charging_port_id']; 
+
+    // Relationship to charging port
+    public function chargingPort(): BelongsTo
     {
-        return $this->belongsToMany(TramSac::class, 'tram_sac_car', 'car_id', 'tram_sac_id');
+        return $this->belongsTo(ChargingPort::class, 'charging_port_id', 'id_charging_port');
     }
 }
