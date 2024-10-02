@@ -42,8 +42,14 @@ class TramSac extends Model
         return $this->belongsTo(User::class, 'user_id', 'id');
     }
 
-    public function ChargingPort(): BelongsToMany
+    /**
+     * Define a belongs-to-many relationship with the ChargingPort model.
+     *
+     * @return BelongsToMany
+     */
+    public function chargingPorts(): BelongsToMany
     {
         return $this->belongsToMany(ChargingPort::class, 'tram_sac_car', 'tram_sac_id', 'charging_port_id');
     }
 }
+

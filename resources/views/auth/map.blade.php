@@ -111,27 +111,27 @@
     }
 
     function updateStationDetails(station) {
-      const cars = station.cars;
-      const uniqueElectricity = [...new Set(cars.map(car => car.dong_dien))].join(', ') || 'Không có thông tin';
-      const uniquePorts = [...new Set(cars.map(car => car.cong_sac))].join(', ') || 'Không có thông tin';
+  const ports = station.charging_ports || [];
+  const uniquePorts = ports.map(port => port.cong_sac).join(', ') || 'Không có thông tin';
+  const cars = ports.flatMap(port => port.cars) || [];
 
-      stationDetails.innerHTML = `
-        <span class="close-btn" id="close-details">X</span>
-        <h4>${station.name_tramsac}</h4>
-        <p><strong>Địa chỉ:</strong> ${station.address}</p>
-        <p><strong>Loại xe:</strong> ${cars.map(car => car.name_car).join(', ') || 'Không có thông tin'}</p>
-        <p><strong>Dòng điện:</strong> ${uniqueElectricity}</p>
-        <p><strong>Cổng sạc:</strong> ${uniquePorts}</p>
-        ${station.image ? '<img src="data:image;base64,' + station.image + '" alt="image">' : ''}
-        <button  onclick="getRouteToLocation(${station.map_lat}, ${station.map_lon})">Chỉ đường</button>
-        <button onclick="shareStationLocation(${station.map_lat}, ${station.map_lon})">Chia sẻ vị trí</button>
-      `;
-      stationDetails.style.display = 'block'; 
+  stationDetails.innerHTML = `
+    <span class="close-btn" id="close-details">X</span>
+    <h4>${station.name_tramsac}</h4>
+    <p><strong>Địa chỉ:</strong> ${station.address || 'Không có thông tin'}</p>
+    <p><strong>Loại xe:</strong> ${cars.map(car => car.name).join(', ') || 'Không có thông tin'}</p>
+    <p><strong>Cổng sạc:</strong> ${uniquePorts}</p>
+    ${station.image ? '<img src="data:image;base64,' + station.image + '" alt="image">' : ''}
+    <button onclick="getRouteToLocation(${station.map_lat}, ${station.map_lon})">Chỉ đường</button>
+    <button onclick="shareStationLocation(${station.map_lat}, ${station.map_lon})">Chia sẻ vị trí</button>
+  `;
+  stationDetails.style.display = 'block';
 
-      document.getElementById('close-details').onclick = function() {
-        stationDetails.style.display = 'none';
-      };
-    }
+  document.getElementById('close-details').onclick = function() {
+    stationDetails.style.display = 'none';
+  };
+}
+
 
     function handleGeolocationError(error) {
       console.error('Error getting location:', error);
@@ -219,48 +219,56 @@
           var lat = parseFloat(coordsMatch[1]);
           var lon = parseFloat(coordsMatch[3]);
           updateMapWithCurrentLocation(lat, lon);
-          return; // Exit the search if coordinates are matched
+          return;
         }
 
         for (var stationName in markers) {
-          var marker = markers[stationName];
           if (stationName.includes(searchQuery)) {
-            marker.addTo(map).setOpacity(1);
+            markers[stationName].addTo(map);
             foundMarker = true;
           } else {
-            marker.remove();
+            map.removeLayer(markers[stationName]);
           }
         }
 
         if (!foundMarker) {
-          alert('Không tìm thấy trạm sạc nào.');
+          alert('Không tìm thấy trạm sạc nào với tên "' + event.target.value + '".');
         }
       });
+
+      document.getElementById('car-type-select').addEventListener('change', function(event) {
+    var selectedType = event.target.value.toLowerCase(); // Lấy loại xe đã chọn
+    var filteredStations = stations.filter(function(station) {
+        // Lọc trạm có chứa xe thuộc loại đã chọn
+        return selectedType === 'all' || station.charging_ports.some(function(port) {
+            return port.cars.some(function(car) {
+                return car.name.toLowerCase() === selectedType;
+            });
+        });
+    });
+
+    // Cập nhật bản đồ
+    for (var stationName in markers) {
+        var marker = markers[stationName];
+        var station = stations.find(st => st.name_tramsac.toLowerCase() === stationName);
+        if (filteredStations.includes(station)) {
+            marker.addTo(map).setOpacity(1); // Hiển thị trạm
+            // Nhảy đến vị trí trạm sạc đầu tiên trong danh sách và hiển thị chi tiết
+            map.setView([station.map_lat, station.map_lon], 15);
+            updateStationDetails(station);
+        } else {
+            map.removeLayer(marker); // Ẩn trạm
+        }
+    }
+});
+
+
     }
 
-    function handleCarTypeChange() {
-  var selectedCarType = document.getElementById('car-type-select').value;
-  for (var stationName in markers) {
-    var marker = markers[stationName];
-    var station = stations.find(station => station.name_tramsac.toLowerCase() === stationName.toLowerCase());
-    
-  
-    var hasSelectedCarType = station && (selectedCarType === 'all' || station.cars.some(car => car.name_car === selectedCarType));
-    
-    if (hasSelectedCarType) {
-      marker.addTo(map); 
-      marker.setOpacity(1); 
-    } else {
-      marker.remove();
-    }
-  }
-}
-
-
-    // Initialize map and events
-    createMarkers();
-    handleUrlParams();
-    initializeSearch();
-    document.getElementById('car-type-select').addEventListener('change', handleCarTypeChange);
+    window.onload = function() {
+      createMarkers();
+      handleUrlParams();
+      initializeSearch();
+    };
   </script>
 @endsection

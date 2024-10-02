@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Tramsac;
 use App\Models\User;
 use App\Models\car; 
+use App\Models\ChargingPort; 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -18,8 +19,8 @@ class HomeController extends Controller
         return view('auth.news');
     }
     public function tramsac(){
-        $cars = Car::all()->unique('cong_sac'); 
-        \Log::info('Cars:', $cars->toArray());
-        return view('auth.tramsac', compact('cars'));
+        $chargingPorts = ChargingPort::all(); 
+        \Log::info('Cars:', $chargingPorts->toArray());
+        return view('auth.tramsac', compact('chargingPorts'));
     }
 }
