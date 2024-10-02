@@ -1,5 +1,5 @@
 @extends('Admin.Dashboard')
-@section('title', 'cooperate')
+@section('title', 'Hệ Thống Đối Tác')
 @section('content')
 <div class="container mt-4">
     <h2>Table Mạng Hệ Thống</h2>

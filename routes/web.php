@@ -6,6 +6,9 @@ use App\Http\Controllers\UserController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\NetworkSystemController;
 use App\Http\Controllers\TramSacController;
+use App\Http\Controllers\NewsController;
+use App\Http\Controllers\Admin\ChargingPortController;
+use App\Http\Controllers\Admin\ChargingStationController;
 use App\Http\Controllers\Admin\DashBoardController;
 use App\Http\Controllers\Admin\AdminController;
 /*
@@ -81,25 +84,34 @@ Route::prefix('admin')->name('admin.')->group(function () {
 
   // Route cho trang tài khoản
   Route::get('/account', [App\Http\Controllers\Admin\UserController::class, 'account'])->name('account');
-  Route::post('/account/store', [App\Http\Controllers\Admin\UserController::class, 'store'])->name('store');
-  Route::get('/account/edit/{id}', [App\Http\Controllers\Admin\UserController::class, 'edit'])->name('edit');
-  Route::put('/account/update/{id}', [App\Http\Controllers\Admin\UserController::class, 'update'])->name('update');
-  Route::delete('/account/delete/{id}', [App\Http\Controllers\Admin\UserController::class, 'destroy'])->name('delete');
+  Route::post('/account/add', [App\Http\Controllers\Admin\UserController::class, 'addUser'])->name('addUser');
+  Route::get('/account/editUser/{id}', [App\Http\Controllers\Admin\UserController::class, 'editUser'])->name('editUser');
+  Route::put('/account/updateUser/{id}', [App\Http\Controllers\Admin\UserController::class, 'updateUser'])->name('updateUser');
+  Route::delete('/account/deleteUser/{id}', [App\Http\Controllers\Admin\UserController::class, 'destroyUser'])->name('deleteUser');
+  Route::put('/account/resetPassword/{id}', [App\Http\Controllers\Admin\UserController::class, 'resetPassword'])->name('resetPassword');
 
   // web.php
   Route::post('/admin/users', [UserController::class, 'addUser'])->name('admin.addUser');
 
   // Route cho trang tin tức
-  Route::get('/news', [DashBoardController::class, 'news'])->name('news');
+  Route::get('/news', [NewsController::class, 'news'])->name('news');
+  Route::post('/news/addNews', [NewsController::class, 'addNews'])->name('addNews');
+  Route::get('/news/editNews/{id}', [NewsController::class, 'editNews'])->name('editNews');
+  Route::put('/news/updateNews/{id}', [NewsController::class, 'updateNews'])->name('updateNews');
+  Route::delete('/news/deleteNews/{id}', [NewsController::class, 'deleteNews'])->name('deleteNews');
 
-  // Route cho trang phê duyệt
-  Route::get('/approval', [DashBoardController::class, 'approval'])->name('approval');
+// Route cho trang trạm sạc
+Route::get('/chargingStation', [ChargingStationController::class, 'chargingStation'])->name('chargingStation'); // Hiển thị danh sách trạm sạc
+Route::post('/chargingStation/addchargingStation', [ChargingStationController::class, 'addChargingStation'])->name('addChargingStation'); // Thêm trạm sạc mới
+Route::put('/chargingStation/updatechargingStation/{id}', [ChargingStationController::class, 'updateChargingStation'])->name('updateChargingStation'); // Cập nhật trạm sạc
+Route::delete('/chargingStation/deletechargingStation/{id}', [ChargingStationController::class, 'destroychargingStation'])->name('deleteChargingStation'); // Xóa trạm sạc
 
-  // Route cho trang trạm sạc
-  Route::get('/charging', [DashBoardController::class, 'charging'])->name('charging');
+  // Route cho trang cổng sạc
+  Route::get('/chargingPort', [ChargingPortController::class, 'chargingPorts'])->name('chargingPort'); // Sửa từ DashBoardController thành ChargingPortController
+  Route::post('/chargingPort', [ChargingPortController::class, 'addPort'])->name('addChargingPort'); // Sửa tên route để không bị trùng
+  Route::put('/chargingPort/{id}', [ChargingPortController::class, 'updatePort'])->name('updateChargingPort');
+  Route::delete('/chargingPort/{id}', [ChargingPortController::class, 'destroyPort'])->name('deleteChargingPort');
 
-  // Route cho trang email
-  Route::get('/email', [DashBoardController::class, 'email'])->name('email');
 
   // Route cho trang đối tác
   Route::get('/cooperate', [App\Http\Controllers\Admin\NetworkSystemController::class, 'cooperate'])->name('cooperate');

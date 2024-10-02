@@ -10,11 +10,21 @@
     <style>
         body {
             font-family: Arial, sans-serif;
+            margin: 0; /* Xóa margin của body để không có khoảng trống */
+            height: 100vh; /* Đảm bảo chiều cao đầy đủ cho body */
+            display: flex; /* Sử dụng flex để dễ dàng quản lý layout */
         }
 
         /* Navbar styles */
         .navbar {
             background-color: #4a90e2; /* Updated color */
+            position: fixed; /* Fix the navbar on the left */
+            height: 100%; /* Full height */
+            width: 200px; /* Set width of navbar */
+            overflow-y: auto; /* Allow vertical scrolling if needed */
+            top: 0; /* Đảm bảo navbar bắt đầu từ đầu trang */
+            display: flex;
+            flex-direction: column; /* Set navbar to vertical */
         }
 
         .navbar-brand {
@@ -22,12 +32,15 @@
         }
 
         .navbar-nav {
-            flex-direction: row; /* Align items horizontally */
+            flex-direction: column; /* Align items vertically */
+            width: 100%; /* Full width */
+            padding-top: 20px; /* Khoảng cách trên */
         }
 
         .navbar-nav .nav-link {
-            color: #ffffff;
+            color: #ffffff; /* Màu chữ */
             font-size: 1.1em; /* Slightly larger font size */
+            text-align: left; /* Align text to the left */
         }
 
         .navbar-nav .nav-link:hover {
@@ -35,32 +48,38 @@
         }
 
         .navbar-nav .nav-item {
-            margin-left: 15px; /* Space out nav items */
+            margin: 10px 0; /* Space out nav items vertically */
         }
 
         .navbar-toggler {
-            border: none;
+            border: none; /* Remove border for toggler */
         }
 
         .content {
-            margin-top: 56px; /* Adjust based on navbar height */
-        }
-
-        .container-fluid {
-            padding: 20px;
+            margin-left: 220px; /* Adjust based on navbar width */
+            margin-top: 0; /* Xóa khoảng cách trên cho nội dung chính */
+            padding: 20px; /* Thêm padding cho nội dung chính */
+            width: calc(100% - 220px); /* Đảm bảo chiều rộng nội dung chính */
         }
 
         .nav-icon {
             font-size: 1.3em; /* Larger icons */
         }
-        
+
+        /* Top right icons */
+        .top-right {
+            position: absolute; /* Đặt vị trí tuyệt đối để định vị chính xác */
+            top: 20px; /* Khoảng cách từ trên cùng */
+            right: 20px; /* Khoảng cách từ bên phải */
+        }
+
         /* Style for the icon list */
         .navbar-nav.ml-auto {
             display: flex;
             align-items: center;
             margin-left: auto; /* Move icons to the right */
         }
-        
+
         .navbar-nav.ml-auto .nav-item {
             margin-left: 10px; /* Space out icons */
         }
@@ -69,44 +88,48 @@
 
 <body>
     <!-- Navbar -->
-    <nav class="navbar navbar-expand-lg navbar-dark">
-        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-            <span class="navbar-toggler-icon"></span>
-        </button>
-        <div class="collapse navbar-collapse" id="navbarNav">
-            <ul class="navbar-nav mr-auto">
-                <li class="nav-item active">
-                    <a class="nav-link" href="{{ route('admin.account') }}"><i class="fas fa-user nav-icon"></i> Tài khoản <span class="sr-only">(current)</span></a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="{{ route('admin.news') }}"><i class="fas fa-newspaper nav-icon"></i> Tin tức</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="{{ route('admin.approval') }}"><i class="fas fa-check nav-icon"></i> Phê duyệt</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="{{ route('admin.cooperate') }}"><i class="fas fa-envelope nav-icon"></i> Đối Tác</a>
-                </li>
-            </ul>
+    <nav class="navbar navbar-dark">
+        <ul class="navbar-nav">
+            <li class="nav-item active">
+                <a class="nav-link" href="{{ route('admin.account') }}"><i class="fas fa-user nav-icon"></i> Tài khoản
+                    <span class="sr-only">(current)</span></a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="{{ route('admin.news') }}"><i class="fas fa-newspaper nav-icon"></i> Tin
+                    tức</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="{{ route('admin.chargingStation') }}"><i class="fas fa-check nav-icon"></i> Trạm Sạc</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="{{ route('admin.cooperate') }}"><i class="fas fa-envelope nav-icon"></i> Đối
+                    Tác</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="{{ route('admin.chargingPort') }}"></i>Cổng Sạc</a>
+            </li>
+        </ul>
+        <div class="top-right">
             <ul class="navbar-nav ml-auto">
                 <li class="nav-item">
                     <a class="nav-link" href="#"><i class="fas fa-bell nav-icon"></i></a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="#"><i class="fas fa-sign-out-alt nav-icon"></i></a>
+                    <a class="nav-link" href="{{route('logout')}}"><i class="fas fa-sign-out-alt nav-icon"></i></a>
                 </li>
             </ul>
         </div>
     </nav>
 
+    <!-- Main content -->
+    <div class="content">
+        @yield('content')
+    </div>
+
     <!-- JS Libraries -->
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
-    
-    @yield('content')
-
-
-</body> 
+</body>
 
 </html>

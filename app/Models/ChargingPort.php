@@ -22,6 +22,6 @@ class ChargingPort extends Model
 
     public function cars(): HasMany
     {
-        return $this->hasMany(car::class, 'charging_port_id', 'id_charging_port');
+        return $this->hasMany(Car::class, 'charging_port_id', 'id_charging_port');
     }
 }

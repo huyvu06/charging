@@ -33,11 +33,11 @@ class DashBoardController extends Controller
 
     public function chargingStation()
     {
-        return view('admin.charging-station');
+        return view('admin.chargingStation');
     }
-    public function email()
+    public function chargingPort()
     {
-        return view('admin.email');
+        return view('admin.chargingPort');
     }
 
     public function cooperate()
