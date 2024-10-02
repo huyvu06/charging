@@ -185,18 +185,19 @@
             <input type="file" id="image" name="image" required accept="image/*">
         </div>
         <div class="form-group">
-            <label>Chọn Xe(*):</label>
-            @if($cars->isEmpty())
-                <p>Chưa có xe nào trong hệ thống.</p>
+            <label>Chọn Cổng Sạc(*):</label>
+            @if($chargingPorts->isEmpty())
+                <p>Chưa có cổng sạc nào trong hệ thống.</p>
             @else
-                @foreach($cars as $car)
+                @foreach($chargingPorts as $chargingPort)
                     <div>
-                        <input type="checkbox" id="car_{{ $car->id_car }}" name="car_ids[]" value="{{ $car->id_car }}">
-                        <label for="car_{{ $car->id_car }}">{{ $car->cong_sac }}</label>
+                        <input type="checkbox" id="charging_port_{{ $chargingPort->id_charging_port }}" name="charging_port_ids[]" value="{{ $chargingPort->id_charging_port }}">
+                        <label for="charging_port_{{ $chargingPort->id_charging_port }}">{{ $chargingPort->cong_sac }}</label>
                     </div>
                 @endforeach
             @endif
         </div>
+        
         
         <div class="form-group">
             <label for="content">Nội Dung:</label>

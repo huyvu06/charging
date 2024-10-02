@@ -42,8 +42,8 @@
             return $this->belongsTo(User::class, 'user_id', 'id');
         }
 
-        public function ChargingPort(): BelongsToMany
-        {
-            return $this->belongsToMany(ChargingPort::class, 'tram_sac_car', 'tram_sac_id', 'charging_port_id');
-        }
+    public function ChargingPort(): BelongsToMany
+    {
+        return $this->belongsToMany(ChargingPort::class, 'tram_sac_car', 'tram_sac_id', 'charging_port_id');
     }
+}
