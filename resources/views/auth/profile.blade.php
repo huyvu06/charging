@@ -39,7 +39,6 @@
         font-weight: 600;
         border-bottom: 2px solid #0056b3;
         position: relative;
-        /* Add relative positioning for button placement */
     }
 
     .card-body {
@@ -50,7 +49,6 @@
         width: 100%;
         max-width: 250px;
         height: 250px;
-        /* Thay đổi chiều cao để ảnh thành hình vuông */
         object-fit: cover;
         border-radius: 10px;
         border: 3px solid #e9ecef;
@@ -122,19 +120,25 @@
 
         .card-body img {
             max-width: 200px;
-            height: 200px;
-            /* Điều chỉnh cho phù hợp với kích thước nhỏ hơn */
+            height: 200px; /* Điều chỉnh cho phù hợp với kích thước nhỏ hơn */
         }
 
         .modal {
-            display: block !important;
-            /* Chỉ để kiểm tra, không nên để trong sản phẩm */
+            display: block !important; /* Chỉ để kiểm tra, không nên để trong sản phẩm */
         }
 
         .modal-header {
             background-color: #007bff;
             color: white;
             border-bottom: 2px solid #0056b3;
+        }
+
+        .card-title {
+            font-size: 24px; /* Giảm kích thước tiêu đề */
+        }
+
+        .card-text {
+            font-size: 16px; /* Giảm kích thước văn bản */
         }
     }
 </style>
@@ -143,7 +147,6 @@
     <div class="card mt-5">
         <div class="card-header">
             Thông tin người dùng
-            <!-- Edit Button as Icon -->
             <button type="button" class="btn-edit" data-toggle="modal" data-target="#editModal">
                 <i class="fas fa-edit"></i>
             </button>
@@ -181,7 +184,6 @@
     </div>
 </div>
 
-<!-- Edit Modal -->
 <!-- Edit Modal -->
 <div class="modal fade" id="editModal" tabindex="-1" aria-labelledby="editModalLabel" aria-hidden="true">
     <div class="modal-dialog">
@@ -239,7 +241,6 @@
         </div>
     </div>
 </div>
-
 
 <!-- Font Awesome JS for Edit Icon -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/js/all.min.js"></script>

@@ -2,55 +2,85 @@
 @section('title', 'Map')
 
 @section('content')
-  <style>
-    #map {
+<style>
+  #map {
       width: 100%;
-      height: 1000px;
-    }
-    .popup-content img {
+      height: calc(100vh - 200px); /* Chiều cao của bản đồ */
+  }
+  .popup-content img {
       max-width: 100px;
       height: auto;
-    }
-    .search-container {
+  }
+  .search-container {
       position: absolute;
-      top: 130px;
+      top: 130px; /* Đảm bảo đủ khoảng cách từ thanh điều hướng */
       right: 50px;
       z-index: 1000;
       background: white;
       padding: 5px;
       border-radius: 5px;
       box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
-    }
-    .search-input {
+      margin-bottom: 10px; /* Khoảng cách giữa ô tìm kiếm và bản đồ */
+  }
+  @media (max-width: 768px) {
+      .search-container {
+          top: 90px; /* Điều chỉnh cho thiết bị di động */
+          right: 10px;
+          width: 90%;
+          padding: 10px;
+      }
+
+      .station-details {
+          top: 90px; /* Điều chỉnh cho thiết bị di động */
+          left: 10px;
+          width: 90%; /* Giảm chiều rộng cho thiết bị di động */
+          max-height: 300px; /* Điều chỉnh chiều cao tối đa cho thiết bị di động */
+          overflow-y: auto; /* Giữ overflow để cuộn nếu cần */
+      }
+  }
+  .station-tooltip {
+      background: white;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      padding: 5px;
+      max-width: 150px;
+  }
+
+  .search-input {
       width: 300px;
       padding: 5px;
       border: 1px solid #ccc;
       border-radius: 4px;
-    }
-    .station-details {
+  }
+  .station-details {
       position: absolute;
-      top: 130px;
+      top: 130px; /* Đảm bảo đủ khoảng cách từ thanh điều hướng */
       left: 50px;
       z-index: 1000;
       background: white;
       padding: 10px;
       border-radius: 5px;
       box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
-      width: 300px;
-      height: auto;
-      display: none; /* Initially hidden */
-    }
-    .station-details img {
+      width: 500px;
+      max-height: 400px;
+      overflow-y: auto;
+      display: none; /* Ban đầu ẩn */
+      margin-top: 10px; /* Khoảng cách giữa chi tiết trạm và bản đồ */
+  }
+
+  .station-details img {
       max-width: 100%;
       height: auto;
-    }
-    .close-btn {
+  }
+  .close-btn {
       cursor: pointer;
       float: right;
       color: red;
       font-weight: bold;
-    }
-  </style>
+  }
+</style>
+
+   <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
 
   <div id="map"></div>
   <div class="search-container">
@@ -96,25 +126,51 @@
     }
 
     function createMarkers() {
-      stations.forEach(function(station) {
-        if (station.map_lat && station.map_lon) {
-          var marker = L.marker([station.map_lat, station.map_lon]).addTo(map)
-            .bindTooltip(station.name_tramsac, { permanent: true, direction: 'top' })
-            .on('click', function() {
-              updateStationDetails(station);
-            });
-          markers[station.name_tramsac.toLowerCase()] = marker;
-        } else {
-          console.warn('Station missing coordinates:', station);
-        }
-      });
+  stations.forEach(function(station) {
+    if (station.map_lat && station.map_lon) {
+      var marker = L.marker([station.map_lat, station.map_lon]).addTo(map)
+        .bindTooltip(station.name_tramsac, { permanent: true, direction: 'top', className: 'station-tooltip' })
+        .on('click', function() {
+          updateStationDetails(station);
+        })
+        .on('mouseover', function() {
+          // Hiển thị thông tin chi tiết về cổng sạc
+          this.bindTooltip(
+            `<strong>${station.name_tramsac}</strong><br>Cổng sạc: ${station.charging_ports.map(port => port.cong_sac).join(', ') || 'Không có thông tin'}`,
+            { sticky: true, className: 'station-tooltip' }
+          ).openTooltip();
+        })
+        .on('mouseout', function() {
+          // Đóng tooltip khi di chuột ra ngoài
+          this.closeTooltip();
+        });
+
+      markers[station.name_tramsac.toLowerCase()] = marker;
+    } else {
+      console.warn('Station missing coordinates:', station);
     }
+  });
+}
+
 
     function updateStationDetails(station) {
   const ports = station.charging_ports || [];
   const uniquePorts = ports.map(port => port.cong_sac).join(', ') || 'Không có thông tin';
   const cars = ports.flatMap(port => port.cars) || [];
 
+  // Tạo các tiện ích bổ sung
+  const additionalFeatures = station.additional_features || [];
+  const additionalFeaturesHtml = additionalFeatures.length 
+    ? `<ul>${additionalFeatures.map(feature => `<li>${feature}</li>`).join('')}</ul>`
+    : '<p>Không có tiện ích bổ sung.</p>';
+
+  // Tạo phần đánh giá người dùng
+  const userRatings = station.user_ratings || [];
+  const userRatingsHtml = userRatings.length 
+    ? userRatings.map(rating => `<p><strong>${rating.user}</strong>: ${rating.comment} (Điểm: ${rating.score})</p>`).join('')
+    : '<p>Chưa có đánh giá nào.</p>';
+
+  // Cập nhật nội dung chi tiết trạm sạc
   stationDetails.innerHTML = `
     <span class="close-btn" id="close-details">X</span>
     <h4>${station.name_tramsac}</h4>
@@ -122,15 +178,37 @@
     <p><strong>Loại xe:</strong> ${cars.map(car => car.name).join(', ') || 'Không có thông tin'}</p>
     <p><strong>Cổng sạc:</strong> ${uniquePorts}</p>
     ${station.image ? '<img src="data:image;base64,' + station.image + '" alt="image">' : ''}
-    <button onclick="getRouteToLocation(${station.map_lat}, ${station.map_lon})">Chỉ đường</button>
-    <button onclick="shareStationLocation(${station.map_lat}, ${station.map_lon})">Chia sẻ vị trí</button>
+    
+    <div>
+      <h5><i class="fas fa-cogs"></i> Tiện ích bổ sung:</h5>
+      ${additionalFeaturesHtml}
+    </div>
+
+    <div>
+      <h5><i class="fas fa-star"></i> Đánh giá người dùng:</h5>
+      ${userRatingsHtml}
+    </div>
+
+    <div>
+      <a href="#" class="action-btn" onclick="getRouteToLocation(${station.map_lat}, ${station.map_lon})">
+        <i class="fas fa-directions"></i> Chỉ đường
+      </a>
+      <a href="#" class="action-btn" onclick="shareStationLocation(${station.map_lat}, ${station.map_lon})">
+        <i class="fas fa-share-alt"></i> Chia sẻ
+      </a>
+    </div>
   `;
+  
+  // Hiển thị chi tiết trạm
   stationDetails.style.display = 'block';
 
+  // Đóng chi tiết trạm
   document.getElementById('close-details').onclick = function() {
     stationDetails.style.display = 'none';
   };
 }
+
+
 
 
     function handleGeolocationError(error) {

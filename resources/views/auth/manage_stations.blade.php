@@ -30,7 +30,7 @@
 
     @media (max-width: 576px) {
         .table thead {
-            display: none; /* Ẩn tiêu đề bảng trên màn hình nhỏ */
+            display: none; 
         }
         .table td {
             display: block; 
@@ -39,7 +39,7 @@
             padding: 10px; 
             position: relative; 
             text-align: left; 
-            border: none; /* Bỏ border cho td để không bị đè lên */
+            border: none; 
         }
         .table td::before {
             content: attr(data-label); 
@@ -63,7 +63,7 @@
         <div>
             <a class="btn btn-primary" href="{{ route('tramsac') }}" role="button">Đăng kí trạm sạc</a>
         </div>
-        <p>Số lượng trạm sạc: {{ $stations->count() }}</p>
+        <p>Số lượng trạm sạc: {{ $stations->total() }}</p> <!-- Hiển thị tổng số lượng trạm sạc -->
         @if($stations->isEmpty())
             <p>Hiện tại bạn chưa đăng ký trạm sạc nào.</p>
         @else
@@ -119,6 +119,10 @@
             @endforeach
         </tbody>
     </table>
+
+    <!-- Hiển thị phân trang -->
+    {{ $stations->links('pagination::bootstrap-4', ['class' => 'pagination-sm']) }}
+
     @endif
 </div>
 @endsection

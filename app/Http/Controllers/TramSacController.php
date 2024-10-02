@@ -27,19 +27,20 @@ class TramSacController extends Controller
 
     \Log::info('Current User ID:', ['user_id' => $user->id]);
 
-    // Lấy danh sách các trạm sạc của người dùng
-    $stations = TramSac::with('chargingPorts') // Change here to chargingPorts
-    ->where('user_id', $user->id)
-    ->where('status', 1)
-    ->get();
+  
+    $stations = TramSac::with('chargingPorts')
+        ->where('user_id', $user->id)
+        ->where('status', 1)
+        ->paginate(1);  // Phân trang với 10 mục mỗi trang
 
-// Nhóm các cổng sạc theo cổng sạc
-        $groupedChargingPorts = $stations->flatMap(function ($station) {
-            return $station->chargingPorts->groupBy('cong_sac'); // Make sure 'cong_sac' exists in the ChargingPort model
-        });
+    // Nhóm các cổng sạc theo cổng sạc
+    $groupedChargingPorts = $stations->flatMap(function ($station) {
+        return $station->chargingPorts->groupBy('cong_sac');
+    });
 
-        return view('auth.manage_stations', compact('stations', 'groupedChargingPorts'));
+    return view('auth.manage_stations', compact('stations', 'groupedChargingPorts'));
 }
+
 
     
     
